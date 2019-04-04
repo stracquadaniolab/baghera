@@ -1,5 +1,5 @@
-baghera_tool : README
-======================================
+Bayesian Gene Heritability Analysis : README
+============================================
 
 Introduction
 ------------
@@ -9,8 +9,5 @@ Current version: 1.0.0
 
 Authors
 -------
-Author: Viola Fanfani
-        Giovanni Stracquadanio
-
-Email:  v.fanfani@sms.ed.ac.uk
-        giovanni.stracquadanio@ed.ac.uk
+- Viola Fanfani (v.fanfani@sms.ed.ac.uk)
+- Giovanni Stracquadanio (giovanni.stracquadanio@ed.ac.uk)
