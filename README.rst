@@ -5,7 +5,7 @@ Introduction
 ------------
 Bayesian HGene Heritability Analysis
 
-Current version: 0.0.1
+Current version: 1.0.0
 
 Authors
 -------
