@@ -9,5 +9,5 @@ Current version: 1.0.0
 
 Authors
 -------
-- Viola Fanfani (v.fanfani@sms.ed.ac.uk)
+- Viola Fanfani (v.fanfani@sms.ed.ac.uk): mantainer.
 - Giovanni Stracquadanio (giovanni.stracquadanio@ed.ac.uk)
