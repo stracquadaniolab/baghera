@@ -11,11 +11,11 @@ setup(
     # package information
     name = 'baghera_tool',
     packages = find_packages(),
-    version = '0.0.1',
-    description = 'Bayesian HGene Heritability Analysis',
+    version = '1.1.3',
+    description = 'Bayesian Gene Heritability Analysis tool',
     long_description = readme,
     license = 'MIT',
-    url='git@git.ecdf.ed.ac.uk:stracquadaniolab/software/baghera_tool.git',
+    url='git@git.ecdf.ed.ac.uk:stracquadaniolab/projects/baghera_tool.git',
     keywords='',
 
     # author information
@@ -23,8 +23,16 @@ setup(
     author_email = 'v.fanfani@sms.ed.ac.uk',
 
     # installation info and requirements
-    install_requires=[],
-    setup_requires=[],
+    install_requires=['argh',
+                    'pandas',
+                    'numpy==1.15',
+                    'htseq',
+                    'gseapy',
+                    'pymc3>=3.6',
+                    ],
+    setup_requires=[
+                    ],
+
 
     # test info and requirements
     test_suite='tests',

@@ -1,0 +1,9 @@
+# This is an implicit value, here for clarity
+--index-url https://pypi.python.org/simple/
+
+argh
+pandas
+numpy==1.15
+htseq
+gseapy
+pymc3>=3.6
