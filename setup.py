@@ -15,7 +15,7 @@ setup(
     description = 'Bayesian Gene Heritability Analysis tool',
     long_description = readme,
     license = 'MIT',
-    url='git@git.ecdf.ed.ac.uk:stracquadaniolab/projects/baghera_tool.git',
+    url='https://github.com/stracquadaniolab/baghera',
     keywords='',
 
     # author information
@@ -45,7 +45,7 @@ setup(
     # all tools have cli interface
     entry_points={
         'console_scripts': [
-            'baghera_tool=baghera_tool.cli:main',
+            'baghera=baghera_tool.cli:main',
         ],
     },
 )
