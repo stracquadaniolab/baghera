@@ -377,9 +377,9 @@ def analyse(snp_dataset, genes_final_file, folder, output_logger,
 
 def regression(
     snp_file: "Data Input, use the SNPs file from dataParse",
-    SUFFIX: "suffix for the output file",
+    SUFFIX: "suffix for the output files",
     output_folder: "folder where to put the results",
-    genes_file: "file with the genes table" = "../data/genesTable.csv",
+    genes_file: "file with the genes table" ,
     SWEEPS: "number of samples for each chain" = 1000,
     TUNE: "number of burnin samples" = 1000,
     CHAINS: "number of chains of the sampler" = 4,
@@ -392,6 +392,24 @@ def regression(
     gamma: "use BAGHERA-gamma regression" = False,
 ):
 
+    """
+    This function runs the bayesian gene-level heritability analysis, BAGHERA.
+    As input it needs the annotated snps file created with generate-SNPs-file
+    and the gene table created by create-files.
+    The output folder and the suffix for the output names are used to save the
+    output files as follows: output_folder/<filetype>_<suffix>.<fmt>
+
+    From command line one can specify all the parameters for the sampler 
+    (sweeps, burnin, chains and cores) and the parameters for the SNPs 
+    and genes filtering.
+
+    We recommend the use of the -m flag for the gene parsing, 
+    however if the whole pipeline is run, there is no need 
+    to check for annotations compatibility. 
+    
+    With the -gamma flag, the BAGHERA-gamma regression is run.
+    """
+    
     folder = output_folder
     logging.info('Output files are in %s' % folder)
     # create output folder

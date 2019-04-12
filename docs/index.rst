@@ -52,11 +52,17 @@ Examples
 Example pipeline::
 
    $ baghera-tool create-files <output-folder>
-   $ baghera-tool generate-SNPs-file <UKBB_summary_filename> --input_type ukbb --output-file <output-filename>.csv
-   $ baghera-tool regression <output-filename>.csv <SUFFIX> <output-folder>
+   $ baghera-tool generate-snp-file <UKBB_summary_filename> --input_type ukbb --output-file <output-filename>.csv
+   $ baghera-tool regression <snp_file>.csv <SUFFIX> <output-folder>
 
 This pipeline uses the default options and files of baghera-tool. Look at the documentation for each function
 to change the parameters and files that are used.
+
+Real files example ::
+
+  $ baghera-tool create-files baghera/primary_data/ -l baghera/eur_w_ld_chr/ -a baghera/gencode.v27lift37.basic.annotation.gtf
+  $ baghera-tool generate-snp-file baghera/primary_data/100032.assoc.tsv --input_type ukbb --output-file baghera/primary_data/SNPs_breast.csv
+  $ baghera-tool regression baghera/primary_data/SNPs_breast.csv breast baghera/results/  baghera/primary_data/genesTable.csv
 
 Help and logs
 -------------
