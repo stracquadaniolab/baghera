@@ -52,7 +52,7 @@ workflows:
     build_baghera_py35:
         jobs:
             - build_conda_package:
-                python-version: "3.5"
+                python-version: "3.6"
                 numpy-version: "1.15"
                 context: ANACONDA_CLOUD_DEPLOY
 
