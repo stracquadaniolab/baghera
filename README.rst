@@ -3,8 +3,10 @@ Bayesian Gene Heritability Analysis
 Current version: 1.0.1
 
 
-BAGHERA, the Bayesian Gene Heritability Analysis, is a software to estimate the contribution
+The Bayesian Gene Heritability Analysis software (BAGHERA) estimates the contribution
 to the heritability of a trait/disease of all the SNPs in the genome (genome-wide heritability)
+and those nearby protein-coding genes (gene-level heritability).to the heritability of
+a trait/disease of all the SNPs in the genome (genome-wide heritability)
 and those nearby protein-coding genes (gene-level heritability).
 
 BAGHERA requires only summary statistics from a Genome-wide Association Study (GWAS),
