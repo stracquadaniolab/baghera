@@ -7,8 +7,6 @@ Bayesian Gene Heritability Analysis
 ===================================
 By Viola Fanfani (v.fanfani@sms.ed.ac.uk)
 
-StracquadanioLab, School of Biological Sciences, University of Edinburgh.
-
 The Bayesian Gene Heritability Analysis software (BAGHERA) estimates the contribution
 to the heritability of a trait/disease of all the SNPs in the genome (genome-wide heritability)
 and those nearby protein-coding genes (gene-level heritability).

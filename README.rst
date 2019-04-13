@@ -2,6 +2,9 @@ Bayesian Gene Heritability Analysis
 ===================================
 Current version: 1.1.0
 
+.. image:: https://circleci.com/gh/stracquadaniolab/baghera/tree/master.svg?style=svg
+    :target: https://circleci.com/gh/stracquadaniolab/baghera/tree/master
+
 
 The Bayesian Gene Heritability Analysis software (BAGHERA) estimates the contribution
 to the heritability of a trait/disease of all the SNPs in the genome (genome-wide heritability)
