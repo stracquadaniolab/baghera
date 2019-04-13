@@ -42,7 +42,7 @@ jobs:
         - save_cache:
             paths:
                 - /opt/conda/pkgs
-            keys:
+            key:
                 - miniconda-pkg-{{ checksum ".conda_recipe/meta.yaml" }}
 
         - run:
