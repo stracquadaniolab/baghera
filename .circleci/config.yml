@@ -56,16 +56,19 @@ workflows:
             - build_conda_package
                 python-version: 3.5
                 numpy-version: 1.15
+                filters:
+                    branches:
+                        only: refactoring
 
-    build_baghera_py36:
-        jobs:
-            - build_conda_package
-                python-version: 3.6
-                numpy-version: 1.15
+    # build_baghera_py36:
+    #     jobs:
+    #         - build_conda_package
+    #             python-version: 3.6
+    #             numpy-version: 1.15
 
-    build_baghera_py37:
-        jobs:
-            - build_conda_package
-                python-version: 3.7
-                numpy-version: 1.15
+    # build_baghera_py37:
+    #     jobs:
+    #         - build_conda_package
+    #             python-version: 3.7
+    #             numpy-version: 1.15
 
