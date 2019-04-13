@@ -44,6 +44,8 @@ jobs:
         - run:
             name: Upload package
             command: |
+                echo ${TMP_PACKAGE_BUILD}
+                ls -l conda-bld/
                 anaconda -t ${UPLOAD_TOKEN} upload -u stracquadaniolab ${TMP_PACKAGE_BUILD}
                 anaconda -t ${UPLOAD_TOKEN} upload -u stracquadaniolab conda-bld/*.bz2
 
