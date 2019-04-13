@@ -1,6 +1,6 @@
 Bayesian Gene Heritability Analysis
 ===================================
-Current version: 1.0.1
+Current version: 1.1.0
 
 
 The Bayesian Gene Heritability Analysis software (BAGHERA) estimates the contribution
