@@ -1,10 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Dec  7 16:08:59 2017
-
-@author: viola
-"""
 import inspect
 import sys
 import logging
@@ -38,14 +31,13 @@ def analyse(snp_dataset,genes_final_file,folder, output_logger, SWEEPS, TUNE, CH
 
     """ Gamma Bayesian hierarchical regression on the dataset: it takes two dataframes as input,
     one with the SNPs summary stats and one with the genes ( already initialised with "genesInitialise" ) """
-    
+
 
     snp_dataset = snp_dataset.reset_index(drop=True)
     nPATIENTS = snp_dataset["sample_size"][0]
 
     d = dict()
 
-    # to run the regression as a mixed effect model, I need a vector (cat) to assign each SNP to its gene
     idx = 0
     nSNP = len(snp_dataset)
     cat = np.zeros(nSNP)
@@ -82,10 +74,7 @@ def analyse(snp_dataset,genes_final_file,folder, output_logger, SWEEPS, TUNE, CH
             chains=CHAINS,
             cores=CORES,
             nuts_kwargs=dict(target_accept=0.90),
-        )  # njobs=2,,init="advi+adapt_diag"
-        # inference = pm.ADVI()
-        # approx = pm.fit(n=TUNE, method=inference)
-        # trace = pm.sample(SWEEPS,step=step tune=TUNE,chains=CHAINS,cores=CORES) #njobs=2,,init="advi+adapt_diag"
+        )
 
         if CHAINS > 1:
             logging.info("evaluating Gelman-Rubin")
@@ -96,14 +85,6 @@ def analyse(snp_dataset,genes_final_file,folder, output_logger, SWEEPS, TUNE, CH
                 + "\n"
                 + "(If this number is >> 1 the method has some convergence problem, \n try increasing the number of s and b)"
             )
-
-    # trace = approx.sample(draws=SWEEPS)
-
-    #plt.figure()
-    #plt.plot(trace["mi"])
-    #plt.ylabel("mi")
-    #plt.xlabel("iteration")
-    #plt.savefig(folder + "mi_" + SUFFIX + ".pdf", f="pdf")
 
     logging.info("Writing output")
     # save general stats to summary file

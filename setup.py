@@ -23,15 +23,8 @@ setup(
     author_email = 'v.fanfani@sms.ed.ac.uk',
 
     # installation info and requirements
-    install_requires=['argh',
-                    'pandas',
-                    'numpy==1.15',
-                    'htseq',
-                    'gseapy',
-                    'pymc3>=3.6',
-                    ],
-    setup_requires=[
-                    ],
+    install_requires=[],
+    setup_requires=[],
 
 
     # test info and requirements
@@ -41,11 +34,4 @@ setup(
     # package deployment info
     include_package_data=True,
     zip_safe=False,
-
-    # all tools have cli interface
-    entry_points={
-        'console_scripts': [
-            'baghera=baghera_tool.cli:main',
-        ],
-    },
 )

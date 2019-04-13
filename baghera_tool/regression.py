@@ -1,10 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Dec  7 16:08:59 2017
-
-@author: viola
-"""
 import sys
 import logging
 import numpy as np
@@ -14,8 +7,9 @@ import datetime
 import pandas as pd
 import HTSeq
 import os
-from baghera_tool import regression_gamma
 
+from baghera_tool import regression_gamma
+from baghera_tool.logging import setup_logger
 
 def trace_sd(x):
     return pd.Series(np.std(x, 0), name="sd")
@@ -27,25 +21,6 @@ def trace_quantiles(x):
 
 def trace_median(x):
     return pd.Series(np.median(x, 0), name="median")
-
-
-def file(x):
-    return pd.Series(snp_file, name="file")
-
-
-def setup_logger(name, log_file, level=logging.INFO):
-    """Function setup as many loggers as you want"""
-
-    handler = logging.FileHandler(log_file)
-    formatter = logging.Formatter("[%(levelname)s]: %(message)s")
-    handler.setFormatter(formatter)
-
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
-    logger.addHandler(handler)
-
-    return logger
-
 
 def subtract(x, y):
     return x - y
@@ -393,23 +368,23 @@ def regression(
 ):
 
     """
-    This function runs the bayesian gene-level heritability analysis, BAGHERA.
+    Performs bayesian gene-level heritability analysis.
     As input it needs the annotated snps file created with generate-SNPs-file
     and the gene table created by create-files.
     The output folder and the suffix for the output names are used to save the
     output files as follows: output_folder/<filetype>_<suffix>.<fmt>
 
-    From command line one can specify all the parameters for the sampler 
-    (sweeps, burnin, chains and cores) and the parameters for the SNPs 
+    From command line one can specify all the parameters for the sampler
+    (sweeps, burnin, chains and cores) and the parameters for the SNPs
     and genes filtering.
 
-    We recommend the use of the -m flag for the gene parsing, 
-    however if the whole pipeline is run, there is no need 
-    to check for annotations compatibility. 
-    
+    We recommend the use of the -m flag for the gene parsing,
+    however if the whole pipeline is run, there is no need
+    to check for annotations compatibility.
+
     With the -gamma flag, the BAGHERA-gamma regression is run.
     """
-    
+
     folder = output_folder
     logging.info('Output files are in %s' % folder)
     # create output folder

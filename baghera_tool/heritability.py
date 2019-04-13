@@ -1,10 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Jan 19 15:54:38 2018
-
-@author: viola
-"""
 import sys
 import logging
 import numpy as np
@@ -15,20 +8,7 @@ import pandas as pd
 import HTSeq
 import os
 
-
-def setup_logger(name, log_file, level=logging.INFO):
-    """Function setup as many loggers as you want"""
-
-    handler = logging.FileHandler(log_file)
-    formatter = logging.Formatter("[%(levelname)s]: %(message)s")
-    handler.setFormatter(formatter)
-
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
-    logger.addHandler(handler)
-
-    return logger
-
+from baghera_tool.logging import setup_logger
 
 def trace_sd(x):
     return pd.Series(np.std(x, 0), name="sd")
@@ -120,9 +100,9 @@ def heritability(
     sep: "separator for the input files, use t for tab separated (not \t)" = ",",
 ):
     """
-    This function computes the genome wide estimate for observed heritability
-    in a Bayesian fashion. The output files are going to be saved in the specified output folder
-    with the given suffix. A step by step output logger is saved as well.
+    Computes the genome-wide estimate heritability using Bayesian regression.
+    The output files are going to be saved in the specified output folder with the given suffix.
+    A step by step output logger is saved as well.
     """
 
     folder = output_folder
@@ -215,123 +195,3 @@ def heritability(
                                          SWEEPS, TUNE, CHAINS, CORES, N_1kG, SUFFIX)
 
     logging.info("Analysis complete")
-
-# def runAnalysis():
-
-#     # open file with the datasets
-#     with open(fileSNP) as f:
-#         SNP = pd.read_table(f)
-
-#     logger.info("Filtering Data")
-
-#     nPATIENTS = SNP["sample_size"][0]
-
-#     output_logger.info(" Sample size " + str(nPATIENTS) + "\n")
-#     output_logger.info(
-#         "Initial Number of SNPs: " + str(len(SNP)) + "\n"
-#     )
-
-#     SNP[SNP["maf"] > 0.01]
-#     output_logger.info(
-#         " Number of SNPs after MAF>0.01 filter: " + str(len(SNP)) + "\n"
-#     )
-
-#     SNP = SNP[
-#         (SNP.chr != 6)
-#         | ((SNP.position >= 34000000) | (SNP.position <= 26000000))
-#     ]
-#     output_logger.info(
-#         " Number of SNPsafter chr6 filter: " + str(len(SNP)) + "\n"
-#     )
-
-#     if CHR != "all":
-#         SNP = SNP[SNP.chr == int(CHR)]
-
-#     SNP = SNP[SNP["l"] > 0]
-
-#     SNP["l"] = 1 + SNP["l"] * (SNP["l"] > 0)  # cleans LD-scores
-#     SNP["z"] = SNP["z"] ** 2  # chi-squared
-
-#     output_logger.info(
-#         " Number of SNPs which the analysis is conducted on : "
-#         + str(len(SNP))
-#         + "\n"
-#     )
-
-#     logger.info("Bayesian analysis started")
-#     [intercept, slope] = bayesianAnalysis(SNP)
-
-#     logger.info("Analysis complete")
-
-
-# def parserFunc():
-#     parser = argparse.ArgumentParser(
-#         description="Parse command line options."
-#     )
-#     parser.add_argument(
-#         "--fileInput",
-#         "-f",
-#         type=str,
-#         required=True,
-#         help="Data Input, use the SNP_suffix file from dataParse",
-#     )
-#     parser.add_argument(
-#         "--sweeps",
-#         "-s",
-#         type=int,
-#         required=True,
-#         help="Number of sweeps for the sampler",
-#     )
-#     parser.add_argument(
-#         "--burn",
-#         "-b",
-#         type=int,
-#         required=True,
-#         help="Number of burnt sweeps during sampling",
-#     )
-#     parser.add_argument(
-#         "--chromosome",
-#         "-c",
-#         type=str,
-#         required=False,
-#         default="all",
-#         help="Chromosome to run the analysis on",
-#     )
-#     parser.add_argument(
-#         "--NSNP",
-#         "-N",
-#         type=int,
-#         default=1290028,
-#         help="Number of SNPs on which the LD-score is calculated",
-#     )
-#     parser.add_argument(
-#         "--chains",
-#         "-ch",
-#         type=int,
-#         default=4,
-#         help="Number of chains, default=4",
-#     )
-#     parser.add_argument(
-#         "--cores",
-#         "-co",
-#         type=int,
-#         default=1,
-#         help="Number of parallel chains, by default they are sequential",
-#     )
-#     parser.add_argument(
-#         "--outputSuffix",
-#         "-o",
-#         type=str,
-#         required=True,
-#         help="Output suffix",
-#     )
-
-#     parser.add_argument(
-#         "-v",
-#         "--verbose",
-#         dest="verbose_count",
-#         action="count",
-#         default=0,
-#         help="increases log verbosity for each occurence.",
-#     )
-#     return parser

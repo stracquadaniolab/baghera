@@ -1,0 +1,43 @@
+package:
+  name: baghera
+  version: 1.0.1
+
+source:
+  path: ..
+
+build:
+  entry_points:
+      - baghera-tool = baghera_tool.cli:main
+
+requirements:
+  build:
+    - python
+    - setuptools
+    - argh
+    - pandas
+    - mkl-service
+    - numpy
+    - htseq
+    - gseapy
+    - pymc3 >=3.6
+
+  run:
+    - python
+    - argh
+    - pandas
+    - mkl-service
+    - numpy
+    - htseq
+    - gseapy
+    - pymc3 >=3.6
+
+test:
+  commands:
+    - baghera-tool --help | grep "regression"
+
+about:
+  home: https://github.com/stracquadaniolab/baghera
+  summary: Bayesian Gene Heritability Analysis from GWAS summary statistics.
+  license: MIT
+  license_file: LICENSE
+
