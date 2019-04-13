@@ -19,7 +19,9 @@ jobs:
 
     steps:
         - checkout
-
+        - restore_cache:
+            keys:
+                - miniconda-pkg-{{ checksum ".conda_recipe/meta.yaml" }}
         - run:
             name: Configure Miniconda
             command: |
@@ -36,6 +38,12 @@ jobs:
                 conda build .conda_recipe -c bioconda -c conda-forge \
                 --python << parameters.python-version >> \
                 --numpy << parameters.numpy-version >>
+
+        - save_cache:
+            paths:
+                - /opt/conda/pkgs
+            keys:
+                - miniconda-pkg-{{ checksum ".conda_recipe/meta.yaml" }}
 
         - run:
             name: Convert package
@@ -54,8 +62,10 @@ jobs:
                 export TMP_PACKAGE_BUILD=`conda build .conda_recipe --output -c bioconda \
                 -c conda-forge --python << parameters.python-version >> \
                  --numpy << parameters.numpy-version >> | grep bz2`
+
                 anaconda -t ${UPLOAD_TOKEN} upload --force -u stracquadaniolab \
-                -l << parameters.build-label >> {TMP_PACKAGE_BUILD}
+                -l << parameters.build-label >> ${TMP_PACKAGE_BUILD}
+
                 anaconda -t ${UPLOAD_TOKEN} upload --force -u stracquadaniolab \
                 -l << parameters.build-label >> ${HOME}/conda-bld/**/*.bz2
 
