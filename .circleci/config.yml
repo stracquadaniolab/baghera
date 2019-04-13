@@ -13,8 +13,6 @@ jobs:
     docker:
       - image: continuumio/miniconda3
 
-    context: ANACONDA_CLOUD_DEPLOY
-
     steps:
         - checkout
 
@@ -56,6 +54,8 @@ workflows:
             - build_conda_package:
                 python-version: "3.5"
                 numpy-version: "1.15"
+                context: ANACONDA_CLOUD_DEPLOY
+
                 filters:
                     branches:
                         only: refactoring
