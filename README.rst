@@ -3,8 +3,10 @@ Bayesian Gene Heritability Analysis
 Current version: 1.1.0
 
 .. image:: https://circleci.com/gh/stracquadaniolab/baghera/tree/master.svg?style=svg
-    :target: https://circleci.com/gh/stracquadaniolab/baghera/tree/master
 
+.. image:: https://anaconda.org/stracquadaniolab/baghera/badges/platforms.svg
+
+.. image:: https://anaconda.org/stracquadaniolab/baghera/badges/version.svg
 
 
 The Bayesian Gene Heritability Analysis software (BAGHERA) estimates the contribution
