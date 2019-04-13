@@ -8,7 +8,6 @@ Current version: 1.1.0
 
 .. image:: https://anaconda.org/stracquadaniolab/baghera/badges/version.svg
 
-
 The Bayesian Gene Heritability Analysis software (BAGHERA) estimates the contribution
 to the heritability of a trait/disease of all the SNPs in the genome (genome-wide heritability)
 and those nearby protein-coding genes (gene-level heritability).to the heritability of
