@@ -21,7 +21,7 @@ jobs:
         - checkout
         - restore_cache:
             keys:
-                - miniconda-pkg-{{ checksum ".conda_recipe/meta.yaml" }}
+                - miniconda-pkg-{{ .Branch }}-{{ checksum ".conda_recipe/meta.yaml" }}
         - run:
             name: Configure Miniconda
             command: |
@@ -42,8 +42,7 @@ jobs:
         - save_cache:
             paths:
                 - /opt/conda/pkgs
-            key:
-                - miniconda-pkg-{{ checksum ".conda_recipe/meta.yaml" }}
+            key: miniconda-pkg-{{ .Branch }}-{{ checksum ".conda_recipe/meta.yaml" }}
 
         - run:
             name: Convert package
