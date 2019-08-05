@@ -26,6 +26,12 @@ setup(
     install_requires=[],
     setup_requires=[],
 
+    # all tools have cli interface
+    entry_points={
+        'console_scripts': [
+            'baghera-tool=baghera_tool.cli:main',
+        ],
+    },
 
     # test info and requirements
     test_suite='tests',

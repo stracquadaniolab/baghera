@@ -14,7 +14,6 @@ from baghera_tool.logging import setup_logger
 def trace_sd(x):
     return pd.Series(np.std(x, 0), name="sd")
 
-
 def trace_quantiles(x):
     return pd.DataFrame(pm.quantiles(x, [5, 50, 95]))
 
