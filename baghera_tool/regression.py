@@ -448,7 +448,8 @@ def regression(
     snp_dataset["z"] = snp_dataset["z"] ** 2  # chi-square
 
     # MAF filtering
-    snp_dataset = [snp_dataset["maf"] > 0.01]
+    snp_dataset = snp_dataset[snp_dataset["maf"] > 0.01]
+    print(snp_dataset)
     output_logger.info(
         "Number of SNPs after MAF>0.01 filter:" + str(len(snp_dataset)) + "\n")
 

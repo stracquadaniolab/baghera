@@ -7,6 +7,71 @@ import sys
 import logging
 import datetime
 
+def import_position_ukbb(fileInput):
+    """
+    Imports UK Biobank files.
+    Three fields are mandatory in the assoc.tsv file:
+    "variant", "nCompleteSamples", "tstat"
+
+    This function directly splits the variant column
+
+    if those are not found an exception is raised
+    """
+
+    with open(fileInput) as f:
+        try:
+            SNP = pd.read_csv(
+                f, usecols=['variant', "n_complete_samples", "tstat"], sep='\t'
+            )
+        except ValueError:
+            logging.exception(
+                "Wrong format of the input file, check the file has ['rsid','n_complete_samples','tstat'] columns"
+            )
+    SNP = SNP.dropna(subset=['variant'])
+
+    SNP['chr'],SNP['position'],_ ,_=SNP['variant'].str.split(':').str
+    #SNP['chr'],SNP['position'],_ 
+    del SNP['variant']
+
+    print(SNP.head())
+
+    SNP = SNP.rename(
+        columns={
+            "tstat": "z",
+            "n_complete_samples": "sample_size",
+        }
+    )
+    return SNP
+
+def import_position(fileInput):
+    """
+    Imports UK Biobank files.
+    Three fields are mandatory in the assoc.tsv file:
+    "chrom", "pos", "nCompleteSamples", "tstat"
+
+
+
+    if those are not found an exception is raised
+    """
+
+    with open(fileInput) as f:
+        try:
+            SNP = pd.read_csv(
+                f, usecols=["chrom", 'pos', "nCompleteSamples", "tstat"], sep='\t'
+            )
+        except ValueError:
+            logging.exception(
+                "Wrong format of the input file, check the file has ['rsid','nCompleteSamples','tstat'] columns"
+            )
+
+    SNP = SNP.rename(
+        columns={
+            "tstat": "z",
+            "nCompleteSamples": "sample_size",
+        }
+    )
+    return SNP
+
 
 def import_ukbb(fileInput):
     """
@@ -289,7 +354,7 @@ def create_files(directory: 'output directory',
 
 
 def generate_snp_file(file_input: 'SNPs file',
-                      input_type: 'ldsc or ukbb',
+                      input_type: 'ldsc or ukbb, position or position_ukbb',
                       output_file: 'output filename (.csv)' = '../data/SNPs.csv',
                       annotated_ld_file: 'previously generated annotated LD file' = '../data/annotatedLD.csv'
                       ):
@@ -302,6 +367,10 @@ def generate_snp_file(file_input: 'SNPs file',
         SNP = import_ldsc(file_input)
     elif input_type == "ukbb":
         SNP = import_ukbb(file_input)
+    elif input_type =='position':
+        SNP = import_position(file_input)
+    elif input_type =='position_ukbb':
+        SNP = import_position_ukbb(file_input)
     else:
         logging.error("Unknown input-type parameter")
 
@@ -317,11 +386,23 @@ def generate_snp_file(file_input: 'SNPs file',
         )
     logging.info('There are %d annotate variants' % len(annotatedLD))
 
-    SNP = SNP.merge(
-        annotatedLD, left_index=True, left_on="rs_id", right_on="rs_id"
-    )
-    logging.info(
-        'We were able to merge %d SNPs between the input file and the annotations' % len(SNP))
+    annotatedLD['chr']=annotatedLD['chr'].astype(str)
+    annotatedLD['position']=annotatedLD['position'].astype(str)
+    SNP['chr']=SNP['chr'].astype(str)
+    SNP['position']=SNP['position'].astype(str)
+
+    if (input_type =='position') | (input_type =='position_ukbb'):
+        SNP = SNP.merge(
+            annotatedLD, left_index=True, left_on=["chr", 'position'], right_on=["chr", 'position']
+        )
+        logging.info(
+            'We were able to merge %d SNPs between the input file and the annotations' % len(SNP))
+    else:
+        SNP = SNP.merge(
+            annotatedLD, left_index=True, left_on="rs_id", right_on="rs_id"
+        )
+        logging.info(
+            'We were able to merge %d SNPs between the input file and the annotations' % len(SNP))
 
     header_list = list(SNP)
 
