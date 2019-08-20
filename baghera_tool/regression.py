@@ -9,6 +9,7 @@ import HTSeq
 import os
 
 from baghera_tool import regression_gamma
+from baghera_tool import regression_chi
 from baghera_tool.logging import setup_logger
 
 def trace_sd(x):
@@ -364,6 +365,7 @@ def regression(
     merge_flag: "flag for compatibility of previous version" = False,
     sep: "separator for the input files, use t for tab separated (not \t)" = ",",
     gamma: "use BAGHERA-gamma regression" = False,
+    chi: 'use BAGHERA-chi regression' =False,
 ):
 
     """
@@ -484,6 +486,10 @@ def regression(
 
     if gamma:
         regression_gamma.analyse(snp_dataset, genes_final_file, folder, output_logger,
+                                 SWEEPS, TUNE, CHAINS, CORES, N_1kG, SUFFIX,
+                                 )
+    elif chi:
+        regression_chi.analyse(snp_dataset, genes_final_file, folder, output_logger,
                                  SWEEPS, TUNE, CHAINS, CORES, N_1kG, SUFFIX,
                                  )
     else:
