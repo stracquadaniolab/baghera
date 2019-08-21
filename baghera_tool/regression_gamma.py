@@ -98,7 +98,7 @@ def analyse(snp_dataset,genes_final_file,folder, output_logger, SWEEPS, TUNE, CH
         folder + "regression_" + SUFFIX + ".csv", sep=",", mode="w"
     )
 
-    d["beta"] = trace["beta"]
+    d["beta"] = N_1kG * trace["beta"]
 
     e_GW = np.mean(trace["e"])
     e_GW_sd = np.std(trace["e"])
