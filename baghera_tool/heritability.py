@@ -22,14 +22,14 @@ def trace_median(x):
     return pd.Series(np.median(x, 0), name="median")
 
 
-def gw_heritability(snp_dataset, folder, output_logger,
-                    SWEEPS, TUNE, CHAINS, CORES, N_1kG, SUFFIX,):
+def gw_normal(snps_object, output_summary_filename, output_logger,
+            SWEEPS, TUNE, CHAINS, CORES, N_1kG,):
     """ Bayesian heritability analysis: requires a dataFrame with the SNPs as input. The file can be created with the dataParse function.
         """
 
     logging.info("Bayesian analysis started")
-    snp_dataset = snp_dataset.reset_index(drop=True)
-    nPATIENTS = snp_dataset["sample_size"][0]
+    snps_object.table = snps_object.table.reset_index(drop=True)
+    nPATIENTS = snps_object.table["sample_size"][0]
 
     with pm.Model() as model:
 
@@ -37,9 +37,9 @@ def gw_heritability(snp_dataset, folder, output_logger,
         mi = pm.Beta("mi", 1, 1)
         fixed_variable = pm.Normal(
             "fxd",
-            mu=(nPATIENTS / N_1kG) * mi * snp_dataset["l"] + e,
-            sd=np.sqrt(np.asarray(snp_dataset["l"])),
-            observed=snp_dataset["z"],
+            mu=(nPATIENTS / N_1kG) * mi * snps_object.table["l"] + e,
+            sd=np.sqrt(np.asarray(snps_object.table["l"])),
+            observed=snps_object.table["z"],
         )
         trace = pm.sample(
             SWEEPS,
@@ -66,8 +66,7 @@ def gw_heritability(snp_dataset, folder, output_logger,
     )
 
     logging.info("Writing output")
-    su.to_csv(
-        folder + "heritability_" + SUFFIX + ".csv", sep=",", mode="w"
+    su.to_csv(output_summary_filename, sep=",", mode="w"
     )
 
     mi_mean = np.mean(trace["mi"])
@@ -85,113 +84,3 @@ def gw_heritability(snp_dataset, folder, output_logger,
     output_logger.info(" heritability 5perc: " + str(mi_5perc) + "\n")
 
     return [intercept, mi_mean]
-
-
-def heritability(
-    snp_file: "Data Input, use the SNPs file from dataParse",
-    SUFFIX: "suffix for the output file",
-    output_folder: "folder where to put the results",
-    SWEEPS: "number of samples for each chain" = 1000,
-    TUNE: "number of burnin samples" = 1000,
-    CHAINS: "number of chains of the sampler" = 4,
-    CORES: "number of parallel cores to use" = 4,
-    N_1kG: "number of SNPs onwhich the LD-score is calculates" = 1290028,
-    CHR: "chromosome on which the analysis is run" = "all",
-    sep: "separator for the input files, use t for tab separated (not \t)" = ",",
-):
-    """
-    Computes the genome-wide estimate heritability using Bayesian regression.
-    The output files are going to be saved in the specified output folder with the given suffix.
-    A step by step output logger is saved as well.
-    """
-
-    folder = output_folder
-    logging.info('Output files are in %s' % folder)
-    # create output folder
-    now = datetime.datetime.now()
-    logging.info("Folder with the results: %s" % folder)
-
-    # outputText = folder + "regression_" + SUFFIX + ".log"  # input file with SNPs and LD-scores
-
-    output_logger = setup_logger(
-        "output_logger", folder + "heritability_" + SUFFIX + ".log")
-
-    output_logger.info(
-        "Regression, bayesian gene-level regression analysis results\n "
-        + "Current date & time "
-        + now.strftime("%Y-%m-%d %H:%M")
-    )
-    output_logger.info("File: " + snp_file)
-    output_logger.info(" Analysis on chr: " + CHR + "\n")
-    output_logger.info(" Sweeps: " + str(SWEEPS) +
-                       " , Burn: " + str(TUNE) + "\n")
-
-    # Initialisation function, it reads the summary stats file, filters the SNPs,
-    # creates the output files
-
-    logging.info("Start Analysis")
-
-    if sep == ',':
-        with open(snp_file) as f:
-            try:
-                snp_dataset = pd.read_csv(f, sep=',')
-            except ValueError:
-                logging.exception("Wrong format of the input file")
-    elif 't' == sep:
-        with open(snp_file) as f:
-            try:
-                snp_dataset = pd.read_csv(f, sep='\t')
-            except ValueError:
-                logging.exception("Wrong format of the input file")
-
-    else:
-        with open(snp_file) as f:
-            try:
-                snp_dataset = pd.read_csv(f, sep=sep)
-            except ValueError:
-                logging.exception("Wrong format of the input file")
-
-    print(snp_dataset.head())
-    n_patients = snp_dataset["sample_size"][0]
-
-    output_logger.info(" Sample size " + str(n_patients) + "\n")
-    output_logger.info(" Initial Number of SNPs: " +
-                       str(len(snp_dataset)) + "\n")
-
-    snp_dataset["l"] = 1 + snp_dataset["l"] * \
-        (snp_dataset["l"] > 0)  # ld-score [1,+inf)
-    snp_dataset["z"] = snp_dataset["z"] ** 2  # chi-square
-
-    # MAF filtering
-    snp_dataset[snp_dataset["maf"] > 0.01]
-    output_logger.info(
-        "Number of SNPs after MAF>0.01 filter:" + str(len(snp_dataset)) + "\n")
-
-    # Filter chromosome 6
-    snp_dataset = snp_dataset[
-        (snp_dataset.chr != 6) | ((snp_dataset.position >=
-                                   34000000) | (snp_dataset.position <= 26000000))
-    ]
-
-    output_logger.info(" Number of SNP safter chr6 filter: " +
-                       str(len(snp_dataset)) + "\n")
-
-    # Non coding SNPs are assigned to a dummy gene, such that the regression is done on the entire SNPs' set
-    snp_dataset = snp_dataset.replace(np.nan, "NonCoding", regex=True)
-
-    if CHR != "all":
-        snp_dataset = snp_dataset[
-            snp_dataset.chr == int(CHR)
-        ]  # comment to run the analysis on the whole genome
-        output_logger.info(
-            "Analysis restricted to a single chromosome: chr" + CHR)
-
-    output_logger.info(
-        " Number of SNPs which the analysis is conducted on : " +
-        str(len(snp_dataset)) + "\n"
-    )
-
-    [intercept, slope] = gw_heritability(snp_dataset, folder, output_logger,
-                                         SWEEPS, TUNE, CHAINS, CORES, N_1kG, SUFFIX)
-
-    logging.info("Analysis complete")
