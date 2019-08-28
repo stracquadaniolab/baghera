@@ -111,13 +111,20 @@ def gene_heritability(
         result = gr.analyse_gamma(snps, output_summary_filename, output_logger,
                                  sweeps, burnin, n_chains, n_cores, N_1kG,
                                  )
+    elif model == 'gamma_gamma':
+        result = gr.analyse_gamma_gamma(snps, output_summary_filename, output_logger,
+                                 sweeps, burnin, n_chains, n_cores, N_1kG,
+                                 )
     else:
         result = gr.analyse_normal(snps, output_summary_filename, output_logger,
                 sweeps, burnin, n_chains, n_cores, N_1kG, 
         )
     
+    print(genes.table.head())
+    print(result.head())
+
     genes.table = genes.table.merge(
-        result, left_index=False, left_on="gene", right_on="name")
+        result, left_index=False, left_on="name", right_on="name")
 
     k = genes.table.n_snps / float(N_1kG)
     genes.table["h2g"] = genes.table.bg_mean.astype("float") * k
