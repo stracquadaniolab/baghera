@@ -115,6 +115,14 @@ def gene_heritability(
         result = gr.analyse_gamma_gamma(snps, output_summary_filename, output_logger,
                                  sweeps, burnin, n_chains, n_cores, N_1kG,
                                  )
+    elif model == 'bgg':
+        result = gr.analyse_beta_gamma_gamma(snps, output_summary_filename, output_logger,
+                                 sweeps, burnin, n_chains, n_cores, N_1kG,
+                                 )
+    elif model == 'bgn':
+        result = gr.analyse_beta_gamma_gamma_normal(snps, output_summary_filename, output_logger,
+                                 sweeps, burnin, n_chains, n_cores, N_1kG,
+                                 )
     else:
         result = gr.analyse_normal(snps, output_summary_filename, output_logger,
                 sweeps, burnin, n_chains, n_cores, N_1kG, 
