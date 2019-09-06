@@ -487,7 +487,7 @@ def analyse_beta_gamma_gamma(snps_object, output_summary_filename, output_logger
     # save general stats to summary file
     su = pm.summary(
         trace,
-        varnames=["mi", "herTOT", "e", 'h2snp'],
+        varnames=["mi", "herTOT", "e"],
         extend=True,
         stat_funcs=[trace_median, trace_quantiles],
     )
