@@ -4,5 +4,5 @@
 
 __author__ = """Viola Fanfani"""
 __email__ = 'v.fanfani@sms.ed.ac.uk'
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 
