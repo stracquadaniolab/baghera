@@ -222,8 +222,14 @@ def gw_heritability(
         output_logger.info("Analysis. Number of SNPs: %s\n,  Number of genes: %s\n" \
             %(str(snps.n_snps), str(snps.n_genes)) )
 
-
-    [intercept, slope] = heritability.gw_normal(snps, output_summary_filename, output_logger,
-                                         sweeps, burnin, n_chains, n_cores, N_1kG)
-
+    if model =='normal':
+        [intercept, slope] = heritability.gw_normal(snps, output_summary_filename, output_logger,
+                                            sweeps, burnin, n_chains, n_cores, N_1kG)
+    elif model=='gamma':
+        [intercept, slope] = heritability.gw_normal(snps, output_summary_filename, output_logger,
+                                            sweeps, burnin, n_chains, n_cores, N_1kG)
+    else:
+        logging.info('Normal model by default')
+        [intercept, slope] = heritability.gw_normal(snps, output_summary_filename, output_logger,
+                                            sweeps, burnin, n_chains, n_cores, N_1kG)
     logging.info("Analysis complete")

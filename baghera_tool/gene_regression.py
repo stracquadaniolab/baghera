@@ -57,9 +57,10 @@ def analyse_normal(snps_object, output_summary_filename, output_logger,
         beta = pm.Normal("beta", mu=mi, sd=W, shape=idx)
         diff = pm.Deterministic("diff", subtract(beta, mi))
         herTOT = pm.Deterministic("herTOT", tt.sum(beta * Mg / N_1kG))
+        # TODO:use e again
         fixed_variable = pm.Normal(
             "fxd",
-            mu=(n_patients / N_1kG) * beta[cat] * (snp_dataset["l"]) + e,
+            mu=(n_patients / N_1kG) * beta[cat] * (snp_dataset["l"]) + 1,
             sd=np.sqrt(np.asarray(snp_dataset["l"])),
             observed=snp_dataset["stats"],
         )  #
@@ -184,9 +185,10 @@ def analyse_gamma(snps_object, output_summary_filename, output_logger,
         beta = pm.Gamma("beta", alpha=mi, beta=N_1kG, shape=idx)
         diff = pm.Deterministic("diff", subtract(beta, mi / N_1kG))
         herTOT = pm.Deterministic("herTOT", tt.sum(beta * Mg))
+        #TODO: use e instead of 1
         fixed_variable = pm.Normal(
             "fxd",
-            mu=(n_patients ) * beta[cat] * (snps_object.table["l"]) + e,
+            mu=(n_patients ) * beta[cat] * (snps_object.table["l"]) + 1,
             sd=np.sqrt(np.asarray(snps_object.table["l"])),
             observed=snps_object.table["stats"],
         )
@@ -620,7 +622,7 @@ def analyse_beta_gamma_large(snps_object, output_summary_filename, output_logger
     )
 
     d={}
-    d["beta"] = N_1kG * trace["beta"]
+    d["beta"] =  trace["beta"]
 
     e_GW = np.mean(trace["e"])
     e_GW_sd = np.std(trace["e"])

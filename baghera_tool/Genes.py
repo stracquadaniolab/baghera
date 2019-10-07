@@ -45,7 +45,6 @@ class Genes(object):
         self.cut_genes = self.table[self.table['n_snps']<snps_thr].gene.values.tolist()
         self.gene_names = self.table['gene'].values.tolist()
 
-        print('NonCoding' in self.gene_names)
         
         non_coding = snps_table[~(snps_table['gene'].isin(self.gene_names))]
         self.table=self.table.append({"gene":non_annotated_name, 
