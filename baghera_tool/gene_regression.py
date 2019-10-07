@@ -35,8 +35,6 @@ def analyse_normal(snps_object, output_summary_filename, output_logger,
     n_patients = snps_object.n_patients
     nSNP = snps_object.n_snps
 
-    
-
     # to run the regression as a mixed effect model, I need a vector (cat) to assign each SNP to its gene
     idx = 0
     cat = np.zeros(nSNP)

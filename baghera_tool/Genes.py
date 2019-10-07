@@ -37,16 +37,16 @@ class Genes(object):
 
         logging.info("Initialisation of genes table")
 
-
         vTot = np.var(snps_table["l"])
 
-        self.table = snps_table.groupby(["gene"]).apply(get_stats)
+        self.table = snps_table[snps_table['gene']!=non_annotated_name].groupby(["gene"]).apply(get_stats)
         self.table.reset_index(inplace=True)
         self.table = self.table[self.table['n_snps']>=snps_thr]
         self.cut_genes = self.table[self.table['n_snps']<snps_thr].gene.values.tolist()
         self.gene_names = self.table['gene'].values.tolist()
-        
 
+        print('NonCoding' in self.gene_names)
+        
         non_coding = snps_table[~(snps_table['gene'].isin(self.gene_names))]
         self.table=self.table.append({"gene":non_annotated_name, 
                     "chrom": None, 
@@ -61,7 +61,5 @@ class Genes(object):
         self.table.rename(columns={'gene':'name'}, inplace=True)
         self.n_genes = len(self.table)
         
-
-    
     def save_table(self, output_filename, separator=','):
         self.table.to_csv(output_filename, sep=',', index=False)
