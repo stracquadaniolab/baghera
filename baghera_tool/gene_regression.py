@@ -545,7 +545,6 @@ def analyse_beta_gamma_gamma(snps_object, output_summary_filename, output_logger
 
     return df
 
-
 def analyse_beta_gamma_large(snps_object, output_summary_filename, output_logger,
             SWEEPS, TUNE, CHAINS, CORES, N_1kG,):
 

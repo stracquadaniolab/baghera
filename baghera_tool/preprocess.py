@@ -66,6 +66,8 @@ def import_position(fileInput):
 
     SNP = SNP.rename(
         columns={
+            "chrom" : 'chr',
+            "pos" : 'position',
             "tstat": "z",
             "nCompleteSamples": "sample_size",
         }
