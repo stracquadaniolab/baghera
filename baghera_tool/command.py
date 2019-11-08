@@ -90,7 +90,7 @@ def gene_heritability(
     snps.rename_non_annotated(name='NonCoding')
 
     if chromosome != "all":
-        snps.apply_filter_table(Snps.cut_single_chrom, **{chromosome: chromosome})
+        snps.apply_filter_table(Snps.cut_single_chrom, **{'chromosome': chromosome})
         output_logger.info(
             "Analysis restricted to chr %s" %str(chromosome) )
     
@@ -171,7 +171,7 @@ def gw_heritability(
     chromosome: "chromosome on which the analysis is run" = "all",
     sep: "separator for the input files, use t for tab separated (not \t)" = ",",
     model: 'regression model'='normal'
-):
+    ):
     """
     Computes the genome-wide estimate heritability using Bayesian regression.
     The output files are going to be saved in the specified output folder with the given suffix.
@@ -204,7 +204,6 @@ def gw_heritability(
     output_logger.info(" Sample size " + str(snps.n_patients) + "\n")
 
 
-
     snps.apply_filter_table(Snps.baghera_filter)
     snps.update_summary()
     output_logger.info("After baghera init filter.\nNumber of SNPs: %s\nNumber of genes: %s\n" \
@@ -214,7 +213,8 @@ def gw_heritability(
     snps.rename_non_annotated(name='NonCoding')
 
     if chromosome != "all":
-        snps.apply_filter_table(Snps.cut_single_chrom, **{chromosome: chromosome})
+        print(chromosome)
+        snps.apply_filter_table(Snps.cut_single_chrom, **{'chromosome': chromosome})
         output_logger.info(
             "Analysis restricted to chr %s" %str(chromosome) )
     

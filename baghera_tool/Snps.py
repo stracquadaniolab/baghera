@@ -31,6 +31,7 @@ class Snps(object):
             with open(input_snp_filename) as f:
                 try:
                     self.table = pd.read_csv(f, sep=',')
+                    self.table['chr'] =self.table['chr'].astype(str)                  
                 except ValueError:
                     logging.exception("Wrong format of the input file")
 
@@ -38,6 +39,7 @@ class Snps(object):
             with open(input_snp_filename) as f:
                 try:
                     self.table = pd.read_csv(f, sep='\t')
+                    self.table['chr'] =self.table['chr'].astype(str)
                 except ValueError:
                     logging.exception(
                         "Wrong format of the input file, can't recognise the \t separator")
@@ -46,6 +48,7 @@ class Snps(object):
             with open(input_snp_filename) as f:
                 try:
                     self.table = pd.read_csv(f, sep=separator)
+                    self.table['chr'] =self.table['chr'].astype(str)
                 except ValueError:
                     logging.exception("Wrong format of the input file")
 
@@ -72,7 +75,7 @@ class Snps(object):
         self.n_genes = len(set(self.table['gene'].values.tolist()))
 
     def apply_filter_table(self, fltr, **args):
-        self.table = fltr(self.table)
+        self.table = fltr(self.table, **args)
 
     def rename_non_annotated(self, name='NonCoding'):
         # Non coding SNPs are assigned to a dummy gene, such that the regression is done on the entire SNPs' set
@@ -106,6 +109,10 @@ def baghera_filter(table):
     return table
 
 def cut_single_chrom(table, chromosome = 1):
-    table= table[table['chr'] == int(chromosome)]
+    print(table.head())
+    print(chromosome)
+    print(str(chromosome))
+    table= table[table['chr'] == str(chromosome)]
+    print(table.head())
     return table
 
