@@ -23,7 +23,7 @@ def trace_median(x):
 
 
 def gw_normal(snps_object, output_summary_filename, output_logger,
-            SWEEPS, TUNE, CHAINS, CORES, N_1kG,):
+            SWEEPS, TUNE, CHAINS, CORES, N_1kG, fix_intercept = False,):
     """ Bayesian heritability analysis: requires a dataFrame with the SNPs as input. The file can be created with the dataParse function.
         """
 
@@ -32,9 +32,11 @@ def gw_normal(snps_object, output_summary_filename, output_logger,
     nPATIENTS = snps_object.table["sample_size"][0]
 
     with pm.Model() as model:
-
-        e = pm.Normal("e", 1, 1)
-        mi = pm.Beta("mi", 1, 1)
+        if fix_intercept:
+            e = pm.Uniform('e', 0.9999,1.0000001)
+        else:
+            e = pm.Normal("e", 1, 1)
+        mi = pm.Beta("mi", 1, 2)
         fixed_variable = pm.Normal(
             "fxd",
             mu=(nPATIENTS / N_1kG) * mi * snps_object.table["l"] + e,
@@ -88,7 +90,7 @@ def gw_normal(snps_object, output_summary_filename, output_logger,
 
 
 def gw_gamma(snps_object, output_summary_filename, output_logger,
-            SWEEPS, TUNE, CHAINS, CORES, N_1kG,):
+            SWEEPS, TUNE, CHAINS, CORES, N_1kG,fix_intercept = False,):
     """ Bayesian heritability analysis: requires a dataFrame with the SNPs as input. The file can be created with the dataParse function.
         """
 

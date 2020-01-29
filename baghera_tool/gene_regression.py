@@ -25,7 +25,7 @@ def subtract(x, y):
 
 
 def analyse_normal(snps_object, output_summary_filename, output_logger,
-            SWEEPS, TUNE, CHAINS, CORES, N_1kG,
+            SWEEPS, TUNE, CHAINS, CORES, N_1kG,fix_intercept = False,
             ):
             
     """ Bayesian hierarchical regression on the dataset: it takes two dataframes as input,
@@ -49,6 +49,8 @@ def analyse_normal(snps_object, output_summary_filename, output_logger,
     cat = cat.astype(int)
 
     logging.info("Model Evaluation Started")
+    logging.info("Model Evaluation Started")
+    print('Average stats: %f' %np.mean(snps_object.table["stats"].values))
 
     with pm.Model() as model:
         W = pm.InverseGamma("W", alpha=1.0, beta=1.0)
@@ -57,13 +59,21 @@ def analyse_normal(snps_object, output_summary_filename, output_logger,
         beta = pm.Normal("beta", mu=mi, sd=W, shape=idx)
         diff = pm.Deterministic("diff", subtract(beta, mi))
         herTOT = pm.Deterministic("herTOT", tt.sum(beta * Mg / N_1kG))
-        # TODO:use e again
-        fixed_variable = pm.Normal(
-            "fxd",
-            mu=(n_patients / N_1kG) * beta[cat] * (snp_dataset["l"]) + 1,
-            sd=np.sqrt(np.asarray(snp_dataset["l"])),
-            observed=snp_dataset["stats"],
-        )  #
+        if fix_intercept:
+            fixed_variable = pm.Normal(
+                "fxd",
+                mu=(n_patients / N_1kG) * beta[cat] * (snp_dataset["l"]) + 1,
+                sd=np.sqrt(np.asarray(snp_dataset["l"])),
+                observed=snp_dataset["stats"],
+            )  #
+
+        else:
+            fixed_variable = pm.Normal(
+                "fxd",
+                mu=(n_patients / N_1kG) * beta[cat] * (snp_dataset["l"]) + e,
+                sd=np.sqrt(np.asarray(snp_dataset["l"])),
+                observed=snp_dataset["stats"],
+            )  #
 
         trace = pm.sample(
             SWEEPS,
@@ -151,7 +161,7 @@ def analyse_normal(snps_object, output_summary_filename, output_logger,
     return df
 
 def analyse_gamma(snps_object, output_summary_filename, output_logger,
-            SWEEPS, TUNE, CHAINS, CORES, N_1kG,):
+            SWEEPS, TUNE, CHAINS, CORES, N_1kG,fix_intercept = False,):
 
     """ Gamma Bayesian hierarchical regression on the dataset: it takes two dataframes as input,
     one with the SNPs summary stats and one with the genes ( already initialised with "genesInitialise" ) """
@@ -178,6 +188,7 @@ def analyse_gamma(snps_object, output_summary_filename, output_logger,
     cat = cat.astype(int)
 
     logging.info("Model Evaluation Started")
+    print('Average stats: %f' %np.mean(snps_object.table["stats"].values))
 
     with pm.Model() as model:
         e = pm.Normal("e", mu=1, sd=0.001)
@@ -185,13 +196,20 @@ def analyse_gamma(snps_object, output_summary_filename, output_logger,
         beta = pm.Gamma("beta", alpha=mi, beta=N_1kG, shape=idx)
         diff = pm.Deterministic("diff", subtract(beta, mi / N_1kG))
         herTOT = pm.Deterministic("herTOT", tt.sum(beta * Mg))
-        #TODO: use e instead of 1
-        fixed_variable = pm.Normal(
-            "fxd",
-            mu=(n_patients ) * beta[cat] * (snps_object.table["l"]) + 1,
-            sd=np.sqrt(np.asarray(snps_object.table["l"])),
-            observed=snps_object.table["stats"],
-        )
+        if fix_intercept:
+            fixed_variable = pm.Normal(
+                "fxd",
+                mu=(n_patients ) * beta[cat] * (snps_object.table["l"]) + 1,
+                sd=np.sqrt(np.asarray(snps_object.table["l"])),
+                observed=snps_object.table["stats"],
+            )
+        else:
+            fixed_variable = pm.Normal(
+                "fxd",
+                mu=(n_patients ) * beta[cat] * (snps_object.table["l"]) + e,
+                sd=np.sqrt(np.asarray(snps_object.table["l"])),
+                observed=snps_object.table["stats"],
+            )
 
         # step = pm.Metropolis()
         trace = pm.sample(

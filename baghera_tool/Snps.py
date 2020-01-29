@@ -26,12 +26,16 @@ class Snps(object):
         self.avg_stats = None
 
     def read_table(self, input_snp_filename, separator =','):
+        with open(input_snp_filename) as f:
+            tab_remove = pd.read_csv(input_snp_filename)
+            print(tab_remove)
+            del tab_remove
 
         if separator == ',':
             with open(input_snp_filename) as f:
                 try:
                     self.table = pd.read_csv(f, sep=',')
-                    self.table['chr'] =self.table['chr'].astype(str)                  
+                    self.table['chr'] =self.table['chr'].astype(str)   
                 except ValueError:
                     logging.exception("Wrong format of the input file")
 
@@ -48,6 +52,7 @@ class Snps(object):
             with open(input_snp_filename) as f:
                 try:
                     self.table = pd.read_csv(f, sep=separator)
+                    self.table['chr']
                     self.table['chr'] =self.table['chr'].astype(str)
                 except ValueError:
                     logging.exception("Wrong format of the input file")
@@ -57,6 +62,7 @@ class Snps(object):
         generates the stats, specify the origin column
         and the function applied to the column values
         '''
+        logging.warning(self.table.columns)
         if 'stats' in self.table.columns:
             logging.info('stats column already exists and is going to be replaced')
 

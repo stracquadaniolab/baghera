@@ -34,6 +34,7 @@ def gene_heritability(
     snp_thr: "threshold for the minimum number of SNPs in a gene" = 10,
     sep: "separator for the input files, use t for tab separated (not \t)" = ",",
     model: 'specify the model for the regression, one betwenn normal/gamma/chi' = 'normal',
+    fix_intercept = False,
     ):
 
     """
@@ -72,6 +73,7 @@ def gene_heritability(
 
     snps = Snps.Snps()
     # read table
+    print(input_snp_filename, sep)
     snps.read_table(input_snp_filename, separator=sep)
     # generate chi squared stats
     snps.generate_stats()
@@ -109,11 +111,11 @@ def gene_heritability(
 
     if model == 'gamma':
         result = gr.analyse_gamma(snps, output_summary_filename, output_logger,
-                                 sweeps, burnin, n_chains, n_cores, N_1kG,
+                                 sweeps, burnin, n_chains, n_cores, N_1kG, fix_intercept,
                                  )
     elif model == 'gamma_gamma':
         result = gr.analyse_gamma_gamma(snps, output_summary_filename, output_logger,
-                                 sweeps, burnin, n_chains, n_cores, N_1kG,
+                                 sweeps, burnin, n_chains, n_cores, N_1kG,fix_intercept,
                                  )
     elif model == 'bgg':
         result = gr.analyse_beta_gamma_gamma(snps, output_summary_filename, output_logger,
@@ -129,7 +131,7 @@ def gene_heritability(
                                  )
     else:
         result = gr.analyse_normal(snps, output_summary_filename, output_logger,
-                sweeps, burnin, n_chains, n_cores, N_1kG, 
+                sweeps, burnin, n_chains, n_cores, N_1kG, fix_intercept,
         )
     
     print(genes.table.head())
@@ -170,7 +172,8 @@ def gw_heritability(
     N_1kG: "number of SNPs onwhich the LD-score is calculates" = 1290028,
     chromosome: "chromosome on which the analysis is run" = "all",
     sep: "separator for the input files, use t for tab separated (not \t)" = ",",
-    model: 'regression model'='normal'
+    model: 'regression model'='normal',
+    fix_intercept = False, 
     ):
     """
     Computes the genome-wide estimate heritability using Bayesian regression.
@@ -222,14 +225,15 @@ def gw_heritability(
         output_logger.info("Analysis. Number of SNPs: %s\n,  Number of genes: %s\n" \
             %(str(snps.n_snps), str(snps.n_genes)) )
 
+
     if model =='normal':
         [intercept, slope] = heritability.gw_normal(snps, output_summary_filename, output_logger,
-                                            sweeps, burnin, n_chains, n_cores, N_1kG)
+                                            sweeps, burnin, n_chains, n_cores, N_1kG, fix_intercept)
     elif model=='gamma':
         [intercept, slope] = heritability.gw_normal(snps, output_summary_filename, output_logger,
-                                            sweeps, burnin, n_chains, n_cores, N_1kG)
+                                            sweeps, burnin, n_chains, n_cores, N_1kG, fix_intercept)
     else:
         logging.info('Normal model by default')
         [intercept, slope] = heritability.gw_normal(snps, output_summary_filename, output_logger,
-                                            sweeps, burnin, n_chains, n_cores, N_1kG)
+                                            sweeps, burnin, n_chains, n_cores, N_1kG, fix_intercept)
     logging.info("Analysis complete")

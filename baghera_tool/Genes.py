@@ -10,6 +10,7 @@ import os
 import baghera_tool.logging as log
 
 def get_stats(group):
+    
     return pd.Series({'chrom': int(group['chr'].values[0]),
     'n_snps': len(group),
     'ld_min': group['l'].min(),
