@@ -1,3 +1,4 @@
+name: "Release package"
 on: [push]
 
 jobs:
