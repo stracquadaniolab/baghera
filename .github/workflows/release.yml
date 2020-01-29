@@ -10,12 +10,16 @@ jobs:
         numpy: [1.15]
     steps:
       - uses: actions/checkout@v1
-      - name: "Setup conda"
+      - name: "Setup Conda"
         uses: s-weigand/setup-conda@v1
         with:
           update-conda: true
           python-version: ${{ matrix.python }}
           conda-channels: anaconda, conda-forge, bioconda
+      - name: "Install Conda dev packages"
+        run: |
+            conda install conda-build
+            conda install -c anaconda anaconda-client
       - name: "Build package"
         run: |
             mkdir conda-build
