@@ -1,9 +1,13 @@
 name: "Release package"
-on: [push]
+
+on:
+    push:
+        branches:
+        - '*'
 
 jobs:
   release:
-    name: "Build conda package"
+    name: "Build Conda package"
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -17,11 +21,11 @@ jobs:
           update-conda: true
           python-version: ${{ matrix.python }}
           conda-channels: anaconda, conda-forge, bioconda
-      - name: "Install Conda dev packages"
+      - name: "Install Conda development packages"
         run: |
             conda install conda-build
             conda install -c anaconda anaconda-client
-      - name: "Build package"
+      - name: "Build and upload package"
         run: |
             mkdir conda-build
             conda build . --no-build-id --numpy ${{ matrix.numpy }} --output-folder ./conda-build
