@@ -1,0 +1,24 @@
+on: [push]
+
+jobs:
+  release:
+    name: "Build conda package"
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: [3.7]
+        numpy: [1.15]
+    steps:
+      - uses: actions/checkout@v1
+      - name: "Setup conda"
+        uses: s-weigand/setup-conda@v1
+        with:
+          update-conda: true
+          python-version: ${{ matrix.python }}
+          conda-channels: anaconda, conda-forge, bioconda
+      - name: "Build package"
+        run: |
+        mkdir conda-build
+        conda build . --no-build-id --numpy ${{ matrix.numpy }} --output-folder ./conda-build
+        conda convert -p all ./conda-build/**/baghera*.bz2
+        anaconda -t ${{ secrets.ANACONDA_API_TOKEN }} upload --force -u stracquadaniolab --no-progress --private ./conda-build/**/baghera*.bz2
