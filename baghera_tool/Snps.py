@@ -13,12 +13,14 @@ def square(a):
     return a**2
 
 class Snps(object):
-
     def __init__(self):
+        '''
+        Class to manage the SNPs table.
+        '''
         self.table = pd.DataFrame()
         self.n_patients = None
-        self.n_snps = None    
-        self.n_genes = None    
+        self.n_snps = None
+        self.n_genes = None
         self.min_maf = None
         self.max_maf = None
         self.min_ld = None
@@ -26,6 +28,12 @@ class Snps(object):
         self.avg_stats = None
 
     def read_table(self, input_snp_filename, separator =','):
+        '''
+        Read the annotated snps table, specify the right table separator.
+        :param input_snp_filename: snps table filename
+        :param separator: separator of the table, defaults to ','
+        '''
+
         with open(input_snp_filename) as f:
             tab_remove = pd.read_csv(input_snp_filename)
             print(tab_remove)
@@ -35,7 +43,7 @@ class Snps(object):
             with open(input_snp_filename) as f:
                 try:
                     self.table = pd.read_csv(f, sep=',')
-                    self.table['chr'] =self.table['chr'].astype(str)   
+                    self.table['chr'] =self.table['chr'].astype(str)
                 except ValueError:
                     logging.exception("Wrong format of the input file")
 
@@ -58,9 +66,12 @@ class Snps(object):
                     logging.exception("Wrong format of the input file")
 
     def generate_stats(self, from_column = 'z', apply = square):
-        ''' 
+        '''
         generates the stats, specify the origin column
         and the function applied to the column values
+
+        :param from_column: stats column, defaults to z
+        :param apply: function to apply to the stats, defaults to 'square'
         '''
         logging.warning(self.table.columns)
         if 'stats' in self.table.columns:
@@ -70,7 +81,10 @@ class Snps(object):
 
 
     def update_summary(self):
-
+        '''
+        updates the summary of the analysis adding general stats
+        such as min/max maf, number of genes...
+        '''
         self.n_patients = self.table["sample_size"][0]
         self.n_snps = len(self.table)
         self.min_maf = np.min(self.table["maf"].values)
@@ -81,13 +95,18 @@ class Snps(object):
         self.n_genes = len(set(self.table['gene'].values.tolist()))
 
     def apply_filter_table(self, fltr, **args):
+        ''' Filter the table '''
         self.table = fltr(self.table, **args)
 
     def rename_non_annotated(self, name='NonCoding'):
-        # Non coding SNPs are assigned to a dummy gene, such that the regression is done on the entire SNPs' set
+        '''Non coding SNPs are assigned to a dummy gene,
+        such that the regression is done on the entire SNPs set'''
+
         self.table['gene'] = self.table['gene'].replace(np.nan, name, regex=True)
-    
+
     def set_non_annotated(self, names, non_annotated_name):
+        '''Substitute some gene names to NonCoding,
+        use for genes that are too small'''
         self.table['gene']=self.table['gene'].replace(to_replace=names, value=non_annotated_name)
 
 ########################################################
@@ -95,7 +114,9 @@ class Snps(object):
 ########################################################
 
 def baghera_filter(table):
-
+    '''
+    Basic filter to generate the snps table ready for baghera.
+    '''
     table["l"] = 1 + table["l"] * \
         (table["l"] > 0)  # ld-score [1,+inf)
 
@@ -109,16 +130,12 @@ def baghera_filter(table):
         (table.chr != 6) | ((table.position >=
                                    34000000) | (table.position <= 26000000))
     ]
-
     logging.info('table no HPC chrom 6: %d' %len(table))
 
     return table
 
 def cut_single_chrom(table, chromosome = 1):
-    print(table.head())
-    print(chromosome)
-    print(str(chromosome))
+    '''Cut table for single chromosome'''
     table= table[table['chr'] == str(chromosome)]
-    print(table.head())
     return table
 

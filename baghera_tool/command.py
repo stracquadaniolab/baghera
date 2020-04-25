@@ -29,40 +29,33 @@ def gene_heritability(
     burnin: "number of burnin samples" = 1000,
     n_chains: "number of chains of the sampler" = 4,
     n_cores: "number of parallel cores to use" = 4,
-    N_1kG: "number of SNPs onwhich the LD-score is calculates" = 1290028,
+    N_1kG: "number of SNPs onwhich the LD-score is calculated" = 1290028,
     chromosome: "chromosome on which the analysis is run" = "all",
     snp_thr: "threshold for the minimum number of SNPs in a gene" = 10,
     sep: "separator for the input files, use t for tab separated (not \t)" = ",",
-    model: 'specify the model for the regression, one betwenn normal/gamma/chi' = 'normal',
+    model: 'specify the model for the regression, one betwenn normal/gamma' = 'normal',
     fix_intercept = False,
     ):
 
     """
     Performs bayesian gene-level heritability analysis.
-    As input it needs the annotated snps file created with generate-SNPs-file
-    and the gene table created by create-files.
-    The output folder and the suffix for the output names are used to save the
-    output files as follows: output_folder/<filetype>_<suffix>.<fmt>
+    As input it needs the annotated snps file created with generate-snps-file.
 
     From command line one can specify all the parameters for the sampler
     (sweeps, burnin, chains and cores) and the parameters for the SNPs
     and genes filtering.
 
-    We recommend the use of the -m flag for the gene parsing,
-    however if the whole pipeline is run, there is no need
-    to check for annotations compatibility.
-
-    With the -gamma flag, the BAGHERA-gamma regression is run.
+    Specify the gamma model by passing --model gamma
     """
 
     # Initialisation of the logger
     output_logger = log.setup_logger("output_logger", logger_filename)
-    log.initialise_log(output_logger, 
+    log.initialise_log(output_logger,
                     'gene level regression, model: %s' %model,
                     [input_snp_filename],
                     [output_genes_filename,output_summary_filename],
-                    sweeps, 
-                    burnin, 
+                    sweeps,
+                    burnin,
                     chromosome = str(chromosome),
                     other_params_diz = {'chains': n_chains, 'cores': n_cores, 'SNP threshold': snp_thr})
 
@@ -95,7 +88,7 @@ def gene_heritability(
         snps.apply_filter_table(Snps.cut_single_chrom, **{'chromosome': chromosome})
         output_logger.info(
             "Analysis restricted to chr %s" %str(chromosome) )
-    
+
         snps.update_summary()
         output_logger.info("Analysis. Number of SNPs: %s\n,  Number of genes: %s\n" \
             %(str(snps.n_snps), str(snps.n_genes)) )
@@ -113,27 +106,11 @@ def gene_heritability(
         result = gr.analyse_gamma(snps, output_summary_filename, output_logger,
                                  sweeps, burnin, n_chains, n_cores, N_1kG, fix_intercept,
                                  )
-    elif model == 'gamma_gamma':
-        result = gr.analyse_gamma_gamma(snps, output_summary_filename, output_logger,
-                                 sweeps, burnin, n_chains, n_cores, N_1kG,fix_intercept,
-                                 )
-    elif model == 'bgg':
-        result = gr.analyse_beta_gamma_gamma(snps, output_summary_filename, output_logger,
-                                 sweeps, burnin, n_chains, n_cores, N_1kG,
-                                 )
-    elif model == 'bgn':
-        result = gr.analyse_beta_gamma_gamma_normal(snps, output_summary_filename, output_logger,
-                                 sweeps, burnin, n_chains, n_cores, N_1kG,
-                                 )
-    elif model == 'bgl':
-        result = gr.analyse_beta_gamma_large(snps, output_summary_filename, output_logger,
-                                 sweeps, burnin, n_chains, n_cores, N_1kG,
-                                 )
     else:
         result = gr.analyse_normal(snps, output_summary_filename, output_logger,
                 sweeps, burnin, n_chains, n_cores, N_1kG, fix_intercept,
         )
-    
+
     print(genes.table.head())
     print(result.head())
 
@@ -173,22 +150,21 @@ def gw_heritability(
     chromosome: "chromosome on which the analysis is run" = "all",
     sep: "separator for the input files, use t for tab separated (not \t)" = ",",
     model: 'regression model'='normal',
-    fix_intercept = False, 
+    fix_intercept = False,
     ):
+
     """
     Computes the genome-wide estimate heritability using Bayesian regression.
-    The output files are going to be saved in the specified output folder with the given suffix.
-    A step by step output logger is saved as well.
     """
 
     # Initialisation of the logger
     output_logger = log.setup_logger("output_logger", logger_filename)
-    log.initialise_log(output_logger, 
+    log.initialise_log(output_logger,
                     'genome-wide regression, model: %s' %model,
                     [input_snp_filename],
                     [output_summary_filename],
-                    sweeps, 
-                    burnin, 
+                    sweeps,
+                    burnin,
                     chromosome = str(chromosome),
                     other_params_diz = {'chains': n_chains, 'cores': n_cores})
 
@@ -220,7 +196,7 @@ def gw_heritability(
         snps.apply_filter_table(Snps.cut_single_chrom, **{'chromosome': chromosome})
         output_logger.info(
             "Analysis restricted to chr %s" %str(chromosome) )
-    
+
         snps.update_summary()
         output_logger.info("Analysis. Number of SNPs: %s\n,  Number of genes: %s\n" \
             %(str(snps.n_snps), str(snps.n_genes)) )

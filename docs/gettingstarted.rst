@@ -1,22 +1,3 @@
-Bayesian Gene Heritability Analysis
-===================================
-Current version: 1.1.2
-
-.. image:: https://circleci.com/gh/stracquadaniolab/baghera/tree/master.svg?style=svg
-
-.. image:: https://anaconda.org/stracquadaniolab/baghera/badges/platforms.svg
-
-.. image:: https://anaconda.org/stracquadaniolab/baghera/badges/version.svg
-
-The Bayesian Gene Heritability Analysis software (BAGHERA) estimates the contribution
-to the heritability of a trait/disease of all the SNPs in the genome (genome-wide heritability)
-and those nearby protein-coding genes (gene-level heritability).to the heritability of
-a trait/disease of all the SNPs in the genome (genome-wide heritability)
-and those nearby protein-coding genes (gene-level heritability).
-
-BAGHERA requires only summary statistics from a Genome-wide Association Study (GWAS),
-LD scores calculated from a population matching the ethnicity of the GWAS study and
-a gene annotation file in GTF format.
 
 Installation
 ------------
@@ -42,7 +23,7 @@ To cope with overlapping genes, we clustered them, obtaining a dataset of
     $ baghera-tool create-files -l <ldscore_folder> -a <annotation.gtf> -s <ld_annotated_snps> -g <genes_table>
 
 
-2. Annotate summary statistics with the SNP annotation built in step 2. We used the summary statistics `here <http://www.nealelab.is/uk-biobank>`_::
+2. Annotate summary statistics with the SNP annotation built in step 2::
 
     $ baghera-tool generate-snp-file -s <stats file> -i <input_type> -o <snps_file> -a <ld_annotated_snps>
 
@@ -69,19 +50,3 @@ Workflow
 Alongside BAGHERA, we are providing a snakemake workflow repository with sample data.
 `workflow-baghera https://github.com/stracquadaniolab/workflow-baghera`_
 
-
-Authors
--------
-- Viola Fanfani (v.fanfani@sms.ed.ac.uk): mantainer.
-- Giovanni Stracquadanio (giovanni.stracquadanio@ed.ac.uk)
-
-Citation
---------
-Gene-level heritability analysis explains the polygenic architecture of cancer.
-Viola Fanfani, Luca Citi, Adrian L. Harris, Francesco Pezzella, Giovanni Stracquadanio
-bioRxiv 599753; doi: https://doi.org/10.1101/599753
-
-Issues
-------
-
-We just released a major upgrade of the code, please report any issue.

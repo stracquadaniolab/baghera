@@ -15,31 +15,35 @@ BAGHERA requires only summary statistics from a Genome-wide Association Study (G
 LD scores calculated from a population matching the ethnicity of the GWAS study and
 a gene annotation file in GTF format.
 
-Installation
-------------
+Workflow
+---------
 
-The easiest and fastest way to install BAGHERA using conda::
+Alongside BAGHERA, we are providing a snakemake workflow repository with sample data.
+`workflow-baghera <https://github.com/stracquadaniolab/workflow-baghera>`_
 
-$ conda install -c stracquadaniolab -c bioconda -c conda-forge
+Getting Started
+------------------
 
+.. toctree::
+   :maxdepth: 2
 
-Getting started
----------------
+   gettingstarted.rst
 
-A typical BAGHERA analysis consists of 3 steps:
+Usage
+---------
+.. toctree::
+   :maxdepth: 2
 
-1. Build a SNP annotation file, where SNPs are annotated to genes and LD scores are assigned.
-2. Annotate summary statistics with the SNP annotation built in step 2.
-3. Run the regression.
+   createdata.rst
+   analysis.rst
 
-Example
-+++++++
-Running BAGHERA on the UK Biobank summary statistics for breast cancer, using EUR LD scores
-and the Gencode annotation. ::
+API
+-----
 
-  $ baghera-tool create-files baghera/primary_data/ -l baghera/eur_w_ld_chr/ -a baghera/gencode.v27lift37.basic.annotation.gtf
-  $ baghera-tool generate-snp-file baghera/primary_data/100032.assoc.tsv --input_type ukbb --output-file baghera/primary_data/SNPs_breast.csv
-  $ baghera-tool regression baghera/primary_data/SNPs_breast.csv breast baghera/results/  baghera/primary_data/genesTable.csv
+.. toctree::
+   :maxdepth: 2
+
+   api.rst
 
 Issues
 ------
