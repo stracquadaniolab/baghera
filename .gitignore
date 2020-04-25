@@ -50,3 +50,6 @@ docs/_build
 
 # Mac OS-specific storage files
 .DS_Store
+
+# Extra Models
+baghera_tool/extra_models.py

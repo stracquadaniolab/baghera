@@ -12,9 +12,9 @@ def import_position_ukbb(fileInput):
     Imports UK Biobank files.
     Three fields are mandatory in the assoc.tsv file:
     "variant", "nCompleteSamples", "tstat"
+    and the merging is done on the position.
 
     This function directly splits the variant column
-
     if those are not found an exception is raised
     """
 
@@ -30,7 +30,7 @@ def import_position_ukbb(fileInput):
     SNP = SNP.dropna(subset=['variant'])
 
     SNP['chr'],SNP['position'],_ ,_=SNP['variant'].str.split(':').str
-    #SNP['chr'],SNP['position'],_ 
+    #SNP['chr'],SNP['position'],_
     del SNP['variant']
 
     print(SNP.head())
@@ -45,11 +45,9 @@ def import_position_ukbb(fileInput):
 
 def import_position(fileInput):
     """
-    Imports UK Biobank files.
-    Three fields are mandatory in the assoc.tsv file:
-    "chrom", "pos", "nCompleteSamples", "tstat"
-
-
+    Imports stats files.
+    Mandatory fields are "chrom", "pos", "nCompleteSamples", "tstat"
+    and the merging is done on the position
 
     if those are not found an exception is raised
     """
@@ -66,6 +64,8 @@ def import_position(fileInput):
 
     SNP = SNP.rename(
         columns={
+            "chrom" : 'chr',
+            "pos" : 'position',
             "tstat": "z",
             "nCompleteSamples": "sample_size",
         }
@@ -78,6 +78,7 @@ def import_ukbb(fileInput):
     Imports UK Biobank files.
     Three fields are mandatory in the assoc.tsv file:
     "rsid", "nCompleteSamples", "tstat"
+    and the merging is done on the rs_id
 
     if those are not found an exception is raised
     """
@@ -106,6 +107,7 @@ def import_ldsc(fileInput):
     """
     Imports sumstats files.
     The file must have the fields "SNP", "Z", "N".
+    and the merging is done on the rs_id
 
     If those aren't in the file an exceprion is raised.
     """
@@ -202,7 +204,7 @@ def annotate_snp(annotation, snp, window):
 
 
 def cluster_genes(genes, chrom_list):
-    """ clean overlapping regions, all partially or completely
+    """ cleans overlapping regions, all partially or completely
         overlapping genes are clustered into a single gene
     """
 
@@ -236,17 +238,29 @@ def cluster_genes(genes, chrom_list):
 
     return genes2
 
+####################################################################
+############# CREATE ANNOTATED LD ##################################
+####################################################################
 
-def create_files(directory: 'output directory',
-                 ldscore_folder: 'folder with LD score as in 1kG' = '../data/eur_w_ld_chr/',
-                 annotation_file: 'gtf file for the annotation' = '../data/gencode.v27lift37.basic.annotation.gtf',
+
+def create_files(ldscore_folder: 'folder with LD score as in 1kG' = 'data/eur_w_ld_chr/',
+                 annotation_file: 'gtf file for the annotation' = 'data/gencode.v31lift37.basic.annotation.gtf',
+                 snps_output: 'annotated ld-score snps file' = 'data/ld_annotated_gencode_v31.csv',
+                 genes_output: 'genes table with clustered genes' = 'data/genes_gencode_v31.csv',
                  chrom_list: 'list of chromosomes used by HTSeq, if None chr<no> is used ' = None,
                  ):
     """
     Builds the annotated set of SNPs required for downstream analysis.
     It requires a genome annotation in GTF format (preferably Gencode)
     and the LD score folders with $CHR.l2.ldscore files.
+
+    :param ldscore_folder: snps table filename
+    :param annotation_file: separator of the table
+    :param snps_output: ldscore snps annotated to genes
+    :param genes_output: genes table, the same used to annotate the snps
+    :param chrom_list: list of chromosomes used by HTSeq, if None chr<no> is used
     """
+
     if chrom_list == None:
         chrom_list = ["chr1", "chr2", "chr3", "chr4", "chr5", "chr6", "chr7", "chr8", "chr9", "chr10", "chr11",
                       "chr12", "chr13", "chr14", "chr15", "chr16", "chr17", "chr18", "chr19", "chr20", "chr21", "chr22",
@@ -256,6 +270,7 @@ def create_files(directory: 'output directory',
     if len(folder) > 0:
         logging.info('LD score folders found')
     else:
+        logging.error('LD score folder not found')
         sys.exit()
 
     file_genes = annotation_file
@@ -306,8 +321,10 @@ def create_files(directory: 'output directory',
             )
             genes_table = genes_table.append(df2, ignore_index=True)
 
+    # Saving genes table
     genes_table.to_csv(
-        directory + "genesTable.csv",
+        genes_output,
+        #directory + "genesTable.csv",
         sep=",",
         index=False,
         float_format="%.3f",
@@ -339,7 +356,8 @@ def create_files(directory: 'output directory',
 
     # write data to the output file
     ld.to_csv(
-        directory + "annotatedLD.csv",
+        snps_output,
+        #directory + "annotatedLD.csv",
         sep=",",
         header=header_list,
         index=False,
@@ -353,24 +371,31 @@ def create_files(directory: 'output directory',
 ####################################################################
 
 
-def generate_snp_file(file_input: 'SNPs file',
-                      input_type: 'ldsc or ukbb, position or position_ukbb',
-                      output_file: 'output filename (.csv)' = '../data/SNPs.csv',
-                      annotated_ld_file: 'previously generated annotated LD file' = '../data/annotatedLD.csv'
+def generate_snp_file(stats_input_file: 'SNPs file' = 'data/c50_breast_snps.csv',
+                      input_type: 'ldsc or ukbb, position or position_ukbb' = 'position_ukbb',
+                      annotated_ld_file: 'previously generated annotated LD file' = 'data/ld_annotated_gencode_v31.csv',
+                      output_file: 'output filename (.csv)' = 'data/c50_snps.csv',
                       ):
-    """ Annotate input summary statistics file using the the annotation
+    """
+    Annotate input summary statistics file using the the annotation
         generated by BAGHERA create-files.
-        IMPORTANT: SNPs are matched to the annotation using rsids.
+
+
+
+    :param snps_input_file: snps table with summary stats
+    :param input_type: type of the input, use one between ldsc, ukbb, position, position_ukbb
+    :param annotated_ld_file: ldscore snps annotated to genes can be generated with create-files
+    :param output_file: output snps file with stats ldscore and gene annotation
     """
 
     if input_type == "ldsc":
-        SNP = import_ldsc(file_input)
+        SNP = import_ldsc(stats_input_file)
     elif input_type == "ukbb":
-        SNP = import_ukbb(file_input)
+        SNP = import_ukbb(stats_input_file)
     elif input_type =='position':
-        SNP = import_position(file_input)
+        SNP = import_position(stats_input_file)
     elif input_type =='position_ukbb':
-        SNP = import_position_ukbb(file_input)
+        SNP = import_position_ukbb(stats_input_file)
     else:
         logging.error("Unknown input-type parameter")
 
@@ -379,11 +404,11 @@ def generate_snp_file(file_input: 'SNPs file',
     try:
         with open(annotated_ld_file) as f:
             annotatedLD = pd.read_csv(f, sep=",")
-
     except ValueError:
         logging.exception(
             "Missing or wrong file with annotated variants"
         )
+
     logging.info('There are %d annotate variants' % len(annotatedLD))
 
     annotatedLD['chr']=annotatedLD['chr'].astype(str)

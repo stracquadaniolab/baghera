@@ -7,9 +7,8 @@ import inspect
 import datetime
 
 from baghera_tool.logging import setup_console_logger
-from baghera_tool import regression as regression
 from baghera_tool import preprocess as pre
-from baghera_tool import heritability as her
+from baghera_tool import command as cmd
 
 
 def main():
@@ -20,8 +19,8 @@ def main():
     """
     argh.dispatch_commands([pre.create_files,
                             pre.generate_snp_file,
-                            regression.regression,
-                            her.heritability
+                            cmd.gene_heritability,
+                            cmd.gw_heritability,
 
                             ])
 
