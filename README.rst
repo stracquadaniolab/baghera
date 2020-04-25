@@ -66,8 +66,8 @@ and the Gencode annotation. ::
 Workflow
 ++++++++
 
-Alongside BAGHERA, we are providing a snakemake workflow repository with sample data.
-`workflow-baghera https://github.com/stracquadaniolab/workflow-baghera`_
+Alongside BAGHERA, we are providing a snakemake workflow `repository <https://github.com/stracquadaniolab/workflow-baghera>`_ with sample data.
+
 
 
 Authors

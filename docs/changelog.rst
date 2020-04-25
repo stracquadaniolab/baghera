@@ -1,6 +1,13 @@
 Changelog
 =========
 
+v2.0.0 - 25/04/2020
+-------------------
+
+Major refactoring of the input/output formats and the classes structure.
+Documentation updated accordingly.
+No changes in the core behaviour.
+
 v1.1.0 - 12/04/2019
 -------------------
 - Updated documentation and minimal refactoring.
