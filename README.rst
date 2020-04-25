@@ -1,6 +1,6 @@
 Bayesian Gene Heritability Analysis
 ===================================
-Current version: 1.1.2
+Current version: 2.0.0
 
 .. image:: https://github.com/stracquadaniolab/baghera/workflows/Release%20package/badge.svg
 
