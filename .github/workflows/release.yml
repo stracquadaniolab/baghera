@@ -29,5 +29,5 @@ jobs:
         run: |
             mkdir conda-build
             conda build . --no-build-id --numpy ${{ matrix.numpy }} --output-folder ./conda-build
-            conda convert -p all ./conda-build/**/baghera*.bz2 --output-folder ./conda-build
+            conda convert -p all ./conda-build/**/baghera*.bz2 --output-dir ./conda-build
             anaconda -t ${{ secrets.ANACONDA_API_TOKEN }} upload --force -u stracquadaniolab --no-progress ./conda-build/**/baghera*.bz2
