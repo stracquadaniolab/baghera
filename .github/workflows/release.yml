@@ -1,4 +1,4 @@
-name: "Release package"
+name: "release"
 
 on:
     push:
