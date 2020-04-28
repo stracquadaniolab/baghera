@@ -9,14 +9,16 @@ import HTSeq
 import os
 import baghera_tool.logging as log
 
+
 def square(a):
-    return a**2
+    return a ** 2
+
 
 class Snps(object):
     def __init__(self):
-        '''
+        """
         Class to manage the SNPs table.
-        '''
+        """
         self.table = pd.DataFrame()
         self.n_patients = None
         self.n_snps = None
@@ -27,64 +29,64 @@ class Snps(object):
         self.max_ld = None
         self.avg_stats = None
 
-    def read_table(self, input_snp_filename, separator =','):
-        '''
+    def read_table(self, input_snp_filename, separator=","):
+        """
         Read the annotated snps table, specify the right table separator.
         :param input_snp_filename: snps table filename
         :param separator: separator of the table, defaults to ','
-        '''
+        """
 
         with open(input_snp_filename) as f:
             tab_remove = pd.read_csv(input_snp_filename)
             print(tab_remove)
             del tab_remove
 
-        if separator == ',':
+        if separator == ",":
             with open(input_snp_filename) as f:
                 try:
-                    self.table = pd.read_csv(f, sep=',')
-                    self.table['chr'] =self.table['chr'].astype(str)
+                    self.table = pd.read_csv(f, sep=",")
+                    self.table["chr"] = self.table["chr"].astype(str)
                 except ValueError:
                     logging.exception("Wrong format of the input file")
 
-        elif 't' == separator:
+        elif "t" == separator:
             with open(input_snp_filename) as f:
                 try:
-                    self.table = pd.read_csv(f, sep='\t')
-                    self.table['chr'] =self.table['chr'].astype(str)
+                    self.table = pd.read_csv(f, sep="\t")
+                    self.table["chr"] = self.table["chr"].astype(str)
                 except ValueError:
                     logging.exception(
-                        "Wrong format of the input file, can't recognise the \t separator")
+                        "Wrong format of the input file, can't recognise the \t separator"
+                    )
 
         else:
             with open(input_snp_filename) as f:
                 try:
                     self.table = pd.read_csv(f, sep=separator)
-                    self.table['chr']
-                    self.table['chr'] =self.table['chr'].astype(str)
+                    self.table["chr"]
+                    self.table["chr"] = self.table["chr"].astype(str)
                 except ValueError:
                     logging.exception("Wrong format of the input file")
 
-    def generate_stats(self, from_column = 'z', apply = square):
-        '''
+    def generate_stats(self, from_column="z", apply=square):
+        """
         generates the stats, specify the origin column
         and the function applied to the column values
 
         :param from_column: stats column, defaults to z
         :param apply: function to apply to the stats, defaults to 'square'
-        '''
+        """
         logging.warning(self.table.columns)
-        if 'stats' in self.table.columns:
-            logging.info('stats column already exists and is going to be replaced')
+        if "stats" in self.table.columns:
+            logging.info("stats column already exists and is going to be replaced")
 
-        self.table['stats']=apply(self.table[from_column])
-
+        self.table["stats"] = apply(self.table[from_column])
 
     def update_summary(self):
-        '''
+        """
         updates the summary of the analysis adding general stats
         such as min/max maf, number of genes...
-        '''
+        """
         self.n_patients = self.table["sample_size"][0]
         self.n_snps = len(self.table)
         self.min_maf = np.min(self.table["maf"].values)
@@ -92,50 +94,52 @@ class Snps(object):
         self.min_ld = np.min(self.table["l"].values)
         self.max_ld = np.max(self.table["l"].values)
         self.avg_stats = np.average(self.table["stats"].values)
-        self.n_genes = len(set(self.table['gene'].values.tolist()))
+        self.n_genes = len(set(self.table["gene"].values.tolist()))
 
     def apply_filter_table(self, fltr, **args):
-        ''' Filter the table '''
+        """ Filter the table """
         self.table = fltr(self.table, **args)
 
-    def rename_non_annotated(self, name='NonCoding'):
-        '''Non coding SNPs are assigned to a dummy gene,
-        such that the regression is done on the entire SNPs set'''
+    def rename_non_annotated(self, name="NonCoding"):
+        """Non coding SNPs are assigned to a dummy gene,
+        such that the regression is done on the entire SNPs set"""
 
-        self.table['gene'] = self.table['gene'].replace(np.nan, name, regex=True)
+        self.table["gene"] = self.table["gene"].replace(np.nan, name, regex=True)
 
     def set_non_annotated(self, names, non_annotated_name):
-        '''Substitute some gene names to NonCoding,
-        use for genes that are too small'''
-        self.table['gene']=self.table['gene'].replace(to_replace=names, value=non_annotated_name)
+        """Substitute some gene names to NonCoding,
+        use for genes that are too small"""
+        self.table["gene"] = self.table["gene"].replace(
+            to_replace=names, value=non_annotated_name
+        )
+
 
 ########################################################
 ############# FILTERS ##################################
 ########################################################
 
-def baghera_filter(table):
-    '''
-    Basic filter to generate the snps table ready for baghera.
-    '''
-    table["l"] = 1 + table["l"] * \
-        (table["l"] > 0)  # ld-score [1,+inf)
 
-    logging.info('table length: %d' %len(table))
+def baghera_filter(table):
+    """
+    Basic filter to generate the snps table ready for baghera.
+    """
+    table["l"] = 1 + table["l"] * (table["l"] > 0)  # ld-score [1,+inf)
+
+    logging.info("table length: %d" % len(table))
     # MAF filtering
     table = table[table["maf"] > 0.01]
 
-    logging.info('table length maf > 0.01: %d' %len(table))
+    logging.info("table length maf > 0.01: %d" % len(table))
     # Filter chromosome 6
     table = table[
-        (table.chr != 6) | ((table.position >=
-                                   34000000) | (table.position <= 26000000))
+        (table.chr != 6) | ((table.position >= 34000000) | (table.position <= 26000000))
     ]
-    logging.info('table no HPC chrom 6: %d' %len(table))
+    logging.info("table no HPC chrom 6: %d" % len(table))
 
     return table
 
-def cut_single_chrom(table, chromosome = 1):
-    '''Cut table for single chromosome'''
-    table= table[table['chr'] == str(chromosome)]
-    return table
 
+def cut_single_chrom(table, chromosome=1):
+    """Cut table for single chromosome"""
+    table = table[table["chr"] == str(chromosome)]
+    return table

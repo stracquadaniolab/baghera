@@ -7,6 +7,7 @@ import sys
 import logging
 import datetime
 
+
 def import_position_ukbb(fileInput):
     """
     Imports UK Biobank files.
@@ -21,27 +22,23 @@ def import_position_ukbb(fileInput):
     with open(fileInput) as f:
         try:
             SNP = pd.read_csv(
-                f, usecols=['variant', "n_complete_samples", "tstat"], sep='\t'
+                f, usecols=["variant", "n_complete_samples", "tstat"], sep="\t"
             )
         except ValueError:
             logging.exception(
                 "Wrong format of the input file, check the file has ['rsid','n_complete_samples','tstat'] columns"
             )
-    SNP = SNP.dropna(subset=['variant'])
+    SNP = SNP.dropna(subset=["variant"])
 
-    SNP['chr'],SNP['position'],_ ,_=SNP['variant'].str.split(':').str
-    #SNP['chr'],SNP['position'],_
-    del SNP['variant']
+    SNP["chr"], SNP["position"], _, _ = SNP["variant"].str.split(":").str
+    # SNP['chr'],SNP['position'],_
+    del SNP["variant"]
 
     print(SNP.head())
 
-    SNP = SNP.rename(
-        columns={
-            "tstat": "z",
-            "n_complete_samples": "sample_size",
-        }
-    )
+    SNP = SNP.rename(columns={"tstat": "z", "n_complete_samples": "sample_size",})
     return SNP
+
 
 def import_position(fileInput):
     """
@@ -55,7 +52,7 @@ def import_position(fileInput):
     with open(fileInput) as f:
         try:
             SNP = pd.read_csv(
-                f, usecols=["chrom", 'pos', "nCompleteSamples", "tstat"], sep='\t'
+                f, usecols=["chrom", "pos", "nCompleteSamples", "tstat"], sep="\t"
             )
         except ValueError:
             logging.exception(
@@ -64,8 +61,8 @@ def import_position(fileInput):
 
     SNP = SNP.rename(
         columns={
-            "chrom" : 'chr',
-            "pos" : 'position',
+            "chrom": "chr",
+            "pos": "position",
             "tstat": "z",
             "nCompleteSamples": "sample_size",
         }
@@ -86,7 +83,7 @@ def import_ukbb(fileInput):
     with open(fileInput) as f:
         try:
             SNP = pd.read_csv(
-                f, usecols=["rsid", "nCompleteSamples", "tstat"], sep='\t'
+                f, usecols=["rsid", "nCompleteSamples", "tstat"], sep="\t"
             )
         except ValueError:
             logging.exception(
@@ -94,11 +91,7 @@ def import_ukbb(fileInput):
             )
 
     SNP = SNP.rename(
-        columns={
-            "rsid": "rs_id",
-            "tstat": "z",
-            "nCompleteSamples": "sample_size",
-        }
+        columns={"rsid": "rs_id", "tstat": "z", "nCompleteSamples": "sample_size",}
     )
     return SNP
 
@@ -114,27 +107,24 @@ def import_ldsc(fileInput):
 
     with open(fileInput) as f:
         try:
-            SNP = pd.read_csv(f, usecols=["SNP", "Z", "N"], sep='\t')
+            SNP = pd.read_csv(f, usecols=["SNP", "Z", "N"], sep="\t")
         except ValueError:
             logging.exception(
                 "Wrong format of the input file, check the file has SNP, Z, N columns"
             )
 
-    SNP = SNP.rename(
-        columns={"SNP": "rs_id", "Z": "z", "N": "sample_size"}
-    )
+    SNP = SNP.rename(columns={"SNP": "rs_id", "Z": "z", "N": "sample_size"})
 
     return SNP
 
 
 # create a GenomicArray object with all the features in a GTF file
 def load_gtf_annotation(
-        filename, chrom_list, feature="gene", transcript="protein_coding"):
+    filename, chrom_list, feature="gene", transcript="protein_coding"
+):
     # GenomicArray will store feature objects because it will be needed
     # when computing distance from boundaries
-    gene_annotation = HTSeq.GenomicArrayOfSets(
-        chrom_list, stranded=False
-    )
+    gene_annotation = HTSeq.GenomicArrayOfSets(chrom_list, stranded=False)
 
     # loop through all the features and retain just the one of type "feature"
     # by default it retains features of type "gene"
@@ -142,9 +132,7 @@ def load_gtf_annotation(
     counter = 0
     for feat in HTSeq.GFF_Reader(filename):
         if feat.iv.chrom in chrom_list:
-            if (feat.type == feature) & (
-                "gene_type" in feat.attr.keys()
-            ):
+            if (feat.type == feature) & ("gene_type" in feat.attr.keys()):
                 if feat.attr["gene_type"] == transcript:
                     gene_annotation[feat.iv] += feat.attr["gene_name"]
 
@@ -165,9 +153,7 @@ def annotate_snp(annotation, snp, window):
 
     # create a query SNP to lookup features +/- window from it
     query_snp = HTSeq.GenomicInterval(
-        snp.chrom,
-        snp.pos - window * (snp.pos - window > 0),
-        snp.pos + window,
+        snp.chrom, snp.pos - window * (snp.pos - window > 0), snp.pos + window,
     )
 
     # keep track of the closest gene and distance
@@ -188,9 +174,7 @@ def annotate_snp(annotation, snp, window):
                 curr_dist = 0
             # otherwise compute the minimum distance from the gene boundaries
             else:
-                curr_dist = min(
-                    abs(snp.pos - iv.start), abs(snp.pos - iv.end)
-                )
+                curr_dist = min(abs(snp.pos - iv.start), abs(snp.pos - iv.end))
             # if current_dist is closer than the best one, update
             if curr_dist < closest_distance:
                 closest_distance = curr_dist
@@ -238,17 +222,19 @@ def cluster_genes(genes, chrom_list):
 
     return genes2
 
+
 ####################################################################
 ############# CREATE ANNOTATED LD ##################################
 ####################################################################
 
 
-def create_files(ldscore_folder: 'folder with LD score as in 1kG' = 'data/eur_w_ld_chr/',
-                 annotation_file: 'gtf file for the annotation' = 'data/gencode.v31lift37.basic.annotation.gtf',
-                 snps_output: 'annotated ld-score snps file' = 'data/ld_annotated_gencode_v31.csv',
-                 genes_output: 'genes table with clustered genes' = 'data/genes_gencode_v31.csv',
-                 chrom_list: 'list of chromosomes used by HTSeq, if None chr<no> is used ' = None,
-                 ):
+def create_files(
+    ldscore_folder: "folder with LD score as in 1kG" = "data/eur_w_ld_chr/",
+    annotation_file: "gtf file for the annotation" = "data/gencode.v31lift37.basic.annotation.gtf",
+    snps_output: "annotated ld-score snps file" = "data/ld_annotated_gencode_v31.csv",
+    genes_output: "genes table with clustered genes" = "data/genes_gencode_v31.csv",
+    chrom_list: "list of chromosomes used by HTSeq, if None chr<no> is used " = None,
+):
     """
     Builds the annotated set of SNPs required for downstream analysis.
     It requires a genome annotation in GTF format (preferably Gencode)
@@ -262,15 +248,36 @@ def create_files(ldscore_folder: 'folder with LD score as in 1kG' = 'data/eur_w_
     """
 
     if chrom_list == None:
-        chrom_list = ["chr1", "chr2", "chr3", "chr4", "chr5", "chr6", "chr7", "chr8", "chr9", "chr10", "chr11",
-                      "chr12", "chr13", "chr14", "chr15", "chr16", "chr17", "chr18", "chr19", "chr20", "chr21", "chr22",
-                      ]
+        chrom_list = [
+            "chr1",
+            "chr2",
+            "chr3",
+            "chr4",
+            "chr5",
+            "chr6",
+            "chr7",
+            "chr8",
+            "chr9",
+            "chr10",
+            "chr11",
+            "chr12",
+            "chr13",
+            "chr14",
+            "chr15",
+            "chr16",
+            "chr17",
+            "chr18",
+            "chr19",
+            "chr20",
+            "chr21",
+            "chr22",
+        ]
 
     folder = g.glob(ldscore_folder + "*.l2.ldscore")
     if len(folder) > 0:
-        logging.info('LD score folders found')
+        logging.info("LD score folders found")
     else:
-        logging.error('LD score folder not found')
+        logging.error("LD score folder not found")
         sys.exit()
 
     file_genes = annotation_file
@@ -280,21 +287,12 @@ def create_files(ldscore_folder: 'folder with LD score as in 1kG' = 'data/eur_w_
         with open(f) as file:
             LD.append(
                 pd.read_csv(
-                    file,
-                    usecols=["CHR", "SNP", "BP", "CM", "MAF", "L2"],
-                    sep='\t',
+                    file, usecols=["CHR", "SNP", "BP", "CM", "MAF", "L2"], sep="\t",
                 )
             )
 
     ld = pd.concat(LD)
-    ld = ld.rename(
-        columns={
-            "CHR": "chr",
-            "SNP": "rs_id",
-            "BP": "position",
-            "L2": "l",
-        }
-    )
+    ld = ld.rename(columns={"CHR": "chr", "SNP": "rs_id", "BP": "position", "L2": "l",})
 
     genes = load_gtf_annotation(file_genes, chrom_list)  # loads annotation
     logging.info("Annotation file loaded")
@@ -303,9 +301,7 @@ def create_files(ldscore_folder: 'folder with LD score as in 1kG' = 'data/eur_w_
     logging.info("Genes clustering successfull")
 
     # creating table of genes
-    genes_table = pd.DataFrame(
-        columns=["chrom", "start", "stop", "name"]
-    )
+    genes_table = pd.DataFrame(columns=["chrom", "start", "stop", "name"])
     for iv, gene in genes.steps():
         if len(gene) > 0:
             df2 = pd.DataFrame(
@@ -324,7 +320,7 @@ def create_files(ldscore_folder: 'folder with LD score as in 1kG' = 'data/eur_w_
     # Saving genes table
     genes_table.to_csv(
         genes_output,
-        #directory + "genesTable.csv",
+        # directory + "genesTable.csv",
         sep=",",
         index=False,
         float_format="%.3f",
@@ -357,7 +353,7 @@ def create_files(ldscore_folder: 'folder with LD score as in 1kG' = 'data/eur_w_
     # write data to the output file
     ld.to_csv(
         snps_output,
-        #directory + "annotatedLD.csv",
+        # directory + "annotatedLD.csv",
         sep=",",
         header=header_list,
         index=False,
@@ -366,16 +362,18 @@ def create_files(ldscore_folder: 'folder with LD score as in 1kG' = 'data/eur_w_
 
     logging.info("SNPs annotated")
 
+
 ####################################################################
 ############# CREATE FILE FOR REGRESSION ANALYSIS ##################
 ####################################################################
 
 
-def generate_snp_file(stats_input_file: 'SNPs file' = 'data/c50_breast_snps.csv',
-                      input_type: 'ldsc or ukbb, position or position_ukbb' = 'position_ukbb',
-                      annotated_ld_file: 'previously generated annotated LD file' = 'data/ld_annotated_gencode_v31.csv',
-                      output_file: 'output filename (.csv)' = 'data/c50_snps.csv',
-                      ):
+def generate_snp_file(
+    stats_input_file: "SNPs file" = "data/c50_breast_snps.csv",
+    input_type: "ldsc or ukbb, position or position_ukbb" = "position_ukbb",
+    annotated_ld_file: "previously generated annotated LD file" = "data/ld_annotated_gencode_v31.csv",
+    output_file: "output filename (.csv)" = "data/c50_snps.csv",
+):
     """
     Annotate input summary statistics file using the the annotation
         generated by BAGHERA create-files.
@@ -392,9 +390,9 @@ def generate_snp_file(stats_input_file: 'SNPs file' = 'data/c50_breast_snps.csv'
         SNP = import_ldsc(stats_input_file)
     elif input_type == "ukbb":
         SNP = import_ukbb(stats_input_file)
-    elif input_type =='position':
+    elif input_type == "position":
         SNP = import_position(stats_input_file)
-    elif input_type =='position_ukbb':
+    elif input_type == "position_ukbb":
         SNP = import_position_ukbb(stats_input_file)
     else:
         logging.error("Unknown input-type parameter")
@@ -405,34 +403,35 @@ def generate_snp_file(stats_input_file: 'SNPs file' = 'data/c50_breast_snps.csv'
         with open(annotated_ld_file) as f:
             annotatedLD = pd.read_csv(f, sep=",")
     except ValueError:
-        logging.exception(
-            "Missing or wrong file with annotated variants"
-        )
+        logging.exception("Missing or wrong file with annotated variants")
 
-    logging.info('There are %d annotate variants' % len(annotatedLD))
+    logging.info("There are %d annotate variants" % len(annotatedLD))
 
-    annotatedLD['chr']=annotatedLD['chr'].astype(str)
-    annotatedLD['position']=annotatedLD['position'].astype(str)
-    SNP['chr']=SNP['chr'].astype(str)
-    SNP['position']=SNP['position'].astype(str)
+    annotatedLD["chr"] = annotatedLD["chr"].astype(str)
+    annotatedLD["position"] = annotatedLD["position"].astype(str)
+    SNP["chr"] = SNP["chr"].astype(str)
+    SNP["position"] = SNP["position"].astype(str)
 
-    if (input_type =='position') | (input_type =='position_ukbb'):
+    if (input_type == "position") | (input_type == "position_ukbb"):
         SNP = SNP.merge(
-            annotatedLD, left_index=True, left_on=["chr", 'position'], right_on=["chr", 'position']
+            annotatedLD,
+            left_index=True,
+            left_on=["chr", "position"],
+            right_on=["chr", "position"],
         )
         logging.info(
-            'We were able to merge %d SNPs between the input file and the annotations' % len(SNP))
+            "We were able to merge %d SNPs between the input file and the annotations"
+            % len(SNP)
+        )
     else:
-        SNP = SNP.merge(
-            annotatedLD, left_index=True, left_on="rs_id", right_on="rs_id"
-        )
+        SNP = SNP.merge(annotatedLD, left_index=True, left_on="rs_id", right_on="rs_id")
         logging.info(
-            'We were able to merge %d SNPs between the input file and the annotations' % len(SNP))
+            "We were able to merge %d SNPs between the input file and the annotations"
+            % len(SNP)
+        )
 
     header_list = list(SNP)
 
     # write data to the output file
-    SNP.to_csv(
-        output_file, index=False, header=header_list, sep=",", mode="w"
-    )
+    SNP.to_csv(output_file, index=False, header=header_list, sep=",", mode="w")
     logging.info("File created")
