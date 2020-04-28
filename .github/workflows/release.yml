@@ -30,4 +30,4 @@ jobs:
             mkdir conda-build
             conda build . --no-build-id --numpy ${{ matrix.numpy }} --output-folder ./conda-build
             conda convert -p all ./conda-build/**/baghera*.bz2
-            anaconda -t ${{ secrets.ANACONDA_API_TOKEN }} upload --force -u stracquadaniolab --no-progress --private ./conda-build/**/baghera*.bz2
+            anaconda -t ${{ secrets.ANACONDA_API_TOKEN }} upload --force -u stracquadaniolab --no-progress ./conda-build/**/baghera*.bz2

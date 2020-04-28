@@ -10,3 +10,9 @@ dependencies:
   - snakemake
   - sphinx
   - sphinx_rtd_theme
+  - pandas
+  - mkl-service
+  - numpy
+  - htseq
+  - gseapy
+  - pymc3 >=3.6

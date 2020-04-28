@@ -11,8 +11,8 @@ import os
 from baghera_tool import gene_regression as gr
 from baghera_tool import heritability
 import baghera_tool.logging as log
-from baghera_tool import Snps
-from baghera_tool import Genes
+from baghera_tool import snps
+from baghera_tool import genes
 
 
 #####################################################################
