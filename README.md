@@ -1,9 +1,8 @@
 # Bayesian Gene Heritability Analysis
 
-![alt-ci](https://github.com/stracquadaniolab/baghera/workflows/release/badge.svg)
+![alt-ci](https://github.com/stracquadaniolab/baghera/workflows/Release/badge.svg)
 ![alt-version](https://img.shields.io/github/v/tag/stracquadaniolab/baghera)
 ![alt-version](https://anaconda.org/stracquadaniolab/baghera/badges/version.svg)
-![alt-platforms](https://anaconda.org/stracquadaniolab/baghera/badges/platforms.svg)
 
 
 The Bayesian Gene Heritability Analysis software (BAGHERA) estimates the contribution
