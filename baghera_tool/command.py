@@ -11,8 +11,8 @@ import os
 from baghera_tool import gene_regression as gr
 from baghera_tool import heritability
 import baghera_tool.logging as log
-from baghera_tool import Snps
-from baghera_tool import Genes
+from baghera_tool import snps
+from baghera_tool import genes
 
 
 #####################################################################
@@ -64,7 +64,7 @@ def gene_heritability(
 
     logging.info("Start Analysis")
 
-    snps = Snps.Snps()
+    snps = snps.Snps()
     # read table
     print(input_snp_filename, sep)
     snps.read_table(input_snp_filename, separator=sep)
@@ -76,7 +76,7 @@ def gene_heritability(
 
 
 
-    snps.apply_filter_table(Snps.baghera_filter)
+    snps.apply_filter_table(snps.baghera_filter)
     snps.update_summary()
     output_logger.info("After baghera init filter.\nNumber of SNPs: %s\nNumber of genes: %s\n" \
         %(str(snps.n_snps), str(snps.n_genes)) )
@@ -85,7 +85,7 @@ def gene_heritability(
     snps.rename_non_annotated(name='NonCoding')
 
     if chromosome != "all":
-        snps.apply_filter_table(Snps.cut_single_chrom, **{'chromosome': chromosome})
+        snps.apply_filter_table(snps.cut_single_chrom, **{'chromosome': chromosome})
         output_logger.info(
             "Analysis restricted to chr %s" %str(chromosome) )
 
@@ -94,7 +94,7 @@ def gene_heritability(
             %(str(snps.n_snps), str(snps.n_genes)) )
 
     # Creates the genes table with the number of SNPs for each gene and the basic stats values
-    genes=Genes.Genes()
+    genes=genes.Genes()
     genes.initialise_genes(snps.table.copy(), snps_thr=snp_thr)
 
     output_logger.info("Output gene table initialised:\nNumber of genes: %s\n" \
@@ -173,7 +173,7 @@ def gw_heritability(
 
     logging.info("Start Analysis")
 
-    snps = Snps.Snps()
+    snps = snps.Snps()
     # read table
     snps.read_table(input_snp_filename, separator=sep)
     # generate chi squared stats
@@ -183,7 +183,7 @@ def gw_heritability(
     output_logger.info(" Sample size " + str(snps.n_patients) + "\n")
 
 
-    snps.apply_filter_table(Snps.baghera_filter)
+    snps.apply_filter_table(snps.baghera_filter)
     snps.update_summary()
     output_logger.info("After baghera init filter.\nNumber of SNPs: %s\nNumber of genes: %s\n" \
         %(str(snps.n_snps), str(snps.n_genes)) )
@@ -193,7 +193,7 @@ def gw_heritability(
 
     if chromosome != "all":
         print(chromosome)
-        snps.apply_filter_table(Snps.cut_single_chrom, **{'chromosome': chromosome})
+        snps.apply_filter_table(snps.cut_single_chrom, **{'chromosome': chromosome})
         output_logger.info(
             "Analysis restricted to chr %s" %str(chromosome) )
 

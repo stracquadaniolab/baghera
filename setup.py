@@ -4,14 +4,14 @@ from setuptools import find_packages, setup
 # determining the directory containing setup.py
 setup_path = os.path.abspath(os.path.dirname(__file__))
 
-with open(os.path.join(setup_path, 'README.rst'), encoding='utf-8') as f:
+with open(os.path.join(setup_path, 'README.md'), encoding='utf-8') as f:
     readme = f.read()
 
 setup(
     # package information
     name = 'baghera_tool',
     packages = find_packages(),
-    version = '2.0.0',
+    version = '2.1.1',
     description = 'Bayesian Gene Heritability Analysis tool',
     long_description = readme,
     license = 'MIT',

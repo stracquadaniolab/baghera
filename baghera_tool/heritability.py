@@ -10,6 +10,7 @@ import os
 
 from baghera_tool.logging import setup_logger
 
+
 def trace_sd(x):
     return pd.Series(np.std(x, 0), name="sd")
 
@@ -22,8 +23,17 @@ def trace_median(x):
     return pd.Series(np.median(x, 0), name="median")
 
 
-def gw_normal(snps_object, output_summary_filename, output_logger,
-            SWEEPS, TUNE, CHAINS, CORES, N_1kG, fix_intercept = False,):
+def gw_normal(
+    snps_object,
+    output_summary_filename,
+    output_logger,
+    SWEEPS,
+    TUNE,
+    CHAINS,
+    CORES,
+    N_1kG,
+    fix_intercept=False,
+):
     """ Bayesian heritability analysis: requires a dataFrame with the SNPs as input. The file can be created with the dataParse function.
         """
 
@@ -33,7 +43,7 @@ def gw_normal(snps_object, output_summary_filename, output_logger,
 
     with pm.Model() as model:
         if fix_intercept:
-            e = pm.Uniform('e', 0.9999,1.0000001)
+            e = pm.Uniform("e", 0.9999, 1.0000001)
         else:
             e = pm.Normal("e", 1, 1)
         mi = pm.Beta("mi", 1, 2)
@@ -61,15 +71,10 @@ def gw_normal(snps_object, output_summary_filename, output_logger,
                 + "(If this number is >> 1 the method has some convergence problem, \n try increasing the number of s and b)"
             )
 
-    su = pm.summary(
-        trace,
-        extend=True,
-        stat_funcs=[trace_median, trace_quantiles],
-    )
+    su = pm.summary(trace, extend=True, stat_funcs=[trace_median, trace_quantiles],)
 
     logging.info("Writing output")
-    su.to_csv(output_summary_filename, sep=",", mode="w"
-    )
+    su.to_csv(output_summary_filename, sep=",", mode="w")
 
     mi_mean = np.mean(trace["mi"])
     mi_median = np.mean(trace["mi"])
@@ -87,10 +92,17 @@ def gw_normal(snps_object, output_summary_filename, output_logger,
 
     return [intercept, mi_mean]
 
-
-
-def gw_gamma(snps_object, output_summary_filename, output_logger,
-            SWEEPS, TUNE, CHAINS, CORES, N_1kG,fix_intercept = False,):
+def gw_gamma(
+    snps_object,
+    output_summary_filename,
+    output_logger,
+    SWEEPS,
+    TUNE,
+    CHAINS,
+    CORES,
+    N_1kG,
+    fix_intercept=False,
+):
     """ Bayesian heritability analysis: requires a dataFrame with the SNPs as input. The file can be created with the dataParse function.
         """
 
@@ -103,11 +115,11 @@ def gw_gamma(snps_object, output_summary_filename, output_logger,
         e = pm.Normal("e", 1, 1)
         mi = pm.Beta("mi", 1, 1)
 
-        k=pm.Gamma('k',alpha =1 , beta =1)
+        k = pm.Gamma("k", alpha=1, beta=1)
         fixed_variable = pm.Gamma(
             "fxd",
-            alpha= k * ( (n_patients) * mi * (snps_object.table["l"]) + 1 )**2,
-            beta=k * ( (n_patients) * mi * (snps_object.table["l"]) + 1 ),
+            alpha=k * ((n_patients) * mi * (snps_object.table["l"]) + 1) ** 2,
+            beta=k * ((n_patients) * mi * (snps_object.table["l"]) + 1),
             observed=snps_object.table["stats"],
         )
         trace = pm.sample(
@@ -128,15 +140,10 @@ def gw_gamma(snps_object, output_summary_filename, output_logger,
                 + "(If this number is >> 1 the method has some convergence problem, \n try increasing the number of s and b)"
             )
 
-    su = pm.summary(
-        trace,
-        extend=True,
-        stat_funcs=[trace_median, trace_quantiles],
-    )
+    su = pm.summary(trace, extend=True, stat_funcs=[trace_median, trace_quantiles],)
 
     logging.info("Writing output")
-    su.to_csv(output_summary_filename, sep=",", mode="w"
-    )
+    su.to_csv(output_summary_filename, sep=",", mode="w")
 
     mi_mean = np.mean(trace["mi"])
     mi_median = np.mean(trace["mi"])

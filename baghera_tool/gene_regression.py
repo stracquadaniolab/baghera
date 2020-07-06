@@ -10,8 +10,10 @@ import os
 
 from baghera_tool.logging import setup_logger
 
+
 def trace_sd(x):
     return pd.Series(np.std(x, 0), name="sd")
+
 
 def trace_quantiles(x):
     return pd.DataFrame(pm.quantiles(x, [5, 50, 95]))
@@ -20,13 +22,22 @@ def trace_quantiles(x):
 def trace_median(x):
     return pd.Series(np.median(x, 0), name="median")
 
+
 def subtract(x, y):
     return x - y
 
 
-def analyse_normal(snps_object, output_summary_filename, output_logger,
-            SWEEPS, TUNE, CHAINS, CORES, N_1kG,fix_intercept = False,
-            ):
+def analyse_normal(
+    snps_object,
+    output_summary_filename,
+    output_logger,
+    SWEEPS,
+    TUNE,
+    CHAINS,
+    CORES,
+    N_1kG,
+    fix_intercept=False,
+):
 
     """
     Bayesian hierarchical regression on the dataset with the normal model.
@@ -41,7 +52,6 @@ def analyse_normal(snps_object, output_summary_filename, output_logger,
     :params N1kG: number of SNPs
     :params fix_intercept: if True the model fixes the intercept.
     """
-
 
     snp_dataset = snps_object.table.copy().reset_index(drop=True)
     n_patients = snps_object.n_patients
@@ -62,7 +72,7 @@ def analyse_normal(snps_object, output_summary_filename, output_logger,
 
     logging.info("Model Evaluation Started")
     logging.info("Model Evaluation Started")
-    print('Average stats: %f' %np.mean(snps_object.table["stats"].values))
+    print("Average stats: %f" % np.mean(snps_object.table["stats"].values))
 
     with pm.Model() as model:
         W = pm.InverseGamma("W", alpha=1.0, beta=1.0)
@@ -121,8 +131,7 @@ def analyse_normal(snps_object, output_summary_filename, output_logger,
 
     e_GW = np.mean(trace["e"])
     e_GW_sd = np.std(trace["e"])
-    output_logger.info(" Intercept: " + str(e_GW) +
-                       " (sd= " + str(e_GW_sd) + ")\n")
+    output_logger.info(" Intercept: " + str(e_GW) + " (sd= " + str(e_GW_sd) + ")\n")
 
     W = np.mean(trace["W"])
     W_sd = np.std(trace["W"])
@@ -131,8 +140,7 @@ def analyse_normal(snps_object, output_summary_filename, output_logger,
     herTOT = np.median(trace["herTOT"])
     herTOT_sd = np.std(trace["herTOT"])
     output_logger.info(
-        " heritability from genes: " +
-        str(herTOT) + " (sd= " + str(herTOT_sd) + ")\n"
+        " heritability from genes: " + str(herTOT) + " (sd= " + str(herTOT_sd) + ")\n"
     )
 
     mi_mean = np.mean(trace["mi"], axis=0)
@@ -154,8 +162,7 @@ def analyse_normal(snps_object, output_summary_filename, output_logger,
         + "]\n"
     )
 
-    Prob = (np.sum(trace["diff"] > 0, axis=0) /
-            len(trace["diff"]))[:, np.newaxis]
+    Prob = (np.sum(trace["diff"] > 0, axis=0) / len(trace["diff"]))[:, np.newaxis]
 
     data = np.hstack((np.asarray(genes)[:, np.newaxis], Prob))
     df = pd.DataFrame(data, columns=("name", "P"))
@@ -172,8 +179,18 @@ def analyse_normal(snps_object, output_summary_filename, output_logger,
     logging.info("analysis done")
     return df
 
-def analyse_gamma(snps_object, output_summary_filename, output_logger,
-            SWEEPS, TUNE, CHAINS, CORES, N_1kG,fix_intercept = False,):
+
+def analyse_gamma(
+    snps_object,
+    output_summary_filename,
+    output_logger,
+    SWEEPS,
+    TUNE,
+    CHAINS,
+    CORES,
+    N_1kG,
+    fix_intercept=False,
+):
 
     """
     Bayesian hierarchical regression on the dataset with the gamma model.
@@ -207,7 +224,7 @@ def analyse_gamma(snps_object, output_summary_filename, output_logger,
     cat = cat.astype(int)
 
     logging.info("Model Evaluation Started")
-    print('Average stats: %f' %np.mean(snps_object.table["stats"].values))
+    print("Average stats: %f" % np.mean(snps_object.table["stats"].values))
 
     with pm.Model() as model:
         e = pm.Normal("e", mu=1, sd=0.001)
@@ -218,14 +235,14 @@ def analyse_gamma(snps_object, output_summary_filename, output_logger,
         if fix_intercept:
             fixed_variable = pm.Normal(
                 "fxd",
-                mu=(n_patients ) * beta[cat] * (snps_object.table["l"]) + 1,
+                mu=(n_patients) * beta[cat] * (snps_object.table["l"]) + 1,
                 sd=np.sqrt(np.asarray(snps_object.table["l"])),
                 observed=snps_object.table["stats"],
             )
         else:
             fixed_variable = pm.Normal(
                 "fxd",
-                mu=(n_patients ) * beta[cat] * (snps_object.table["l"]) + e,
+                mu=(n_patients) * beta[cat] * (snps_object.table["l"]) + e,
                 sd=np.sqrt(np.asarray(snps_object.table["l"])),
                 observed=snps_object.table["stats"],
             )
@@ -257,27 +274,19 @@ def analyse_gamma(snps_object, output_summary_filename, output_logger,
         extend=True,
         stat_funcs=[trace_median, trace_quantiles],
     )
-    su.to_csv(
-        output_summary_filename, sep=",", mode="w"
-    )
+    su.to_csv(output_summary_filename, sep=",", mode="w")
 
-    d={}
+    d = {}
     d["beta"] = N_1kG * trace["beta"]
 
     e_GW = np.mean(trace["e"])
     e_GW_sd = np.std(trace["e"])
-    output_logger.info(
-        " Intercept: " + str(e_GW) + " (sd= " + str(e_GW_sd) + ")\n"
-    )
+    output_logger.info(" Intercept: " + str(e_GW) + " (sd= " + str(e_GW_sd) + ")\n")
 
     herTOT = np.median(trace["herTOT"])
     herTOT_sd = np.std(trace["herTOT"])
     output_logger.info(
-        " heritability from genes: "
-        + str(herTOT)
-        + " (sd= "
-        + str(herTOT_sd)
-        + ")\n"
+        " heritability from genes: " + str(herTOT) + " (sd= " + str(herTOT_sd) + ")\n"
     )
 
     mi_mean = np.mean(trace["mi"], axis=0)
@@ -299,21 +308,16 @@ def analyse_gamma(snps_object, output_summary_filename, output_logger,
         + "]\n"
     )
 
-    Prob = (np.sum(trace["diff"] > 0, axis=0) / len(trace["diff"]))[
-        :, np.newaxis
-    ]
+    Prob = (np.sum(trace["diff"] > 0, axis=0) / len(trace["diff"]))[:, np.newaxis]
 
     data = np.hstack((np.asarray(genes)[:, np.newaxis], Prob))
     df = pd.DataFrame(data, columns=("name", "P"))
-
 
     df["bg_mean"] = np.mean(d["beta"], axis=0)[:, np.newaxis]
     df["bg_median"] = np.median(d["beta"], axis=0)[:, np.newaxis]
     df["bg_var"] = np.var(d["beta"], axis=0)[:, np.newaxis]
     df["bg_5perc"] = np.percentile(d["beta"], 5, axis=0)[:, np.newaxis]
-    df["bg_95perc"] = np.percentile(d["beta"], 95, axis=0)[
-        :, np.newaxis
-    ]
+    df["bg_95perc"] = np.percentile(d["beta"], 95, axis=0)[:, np.newaxis]
 
     df["mi_mean"] = mi_mean
     df["mi_median"] = mi_median
