@@ -59,7 +59,7 @@ def import_position(fileInput):
             )
         except ValueError:
             logging.exception(
-                "Wrong format of the input file, check the file has ['rsid','nCompleteSamples','tstat'] columns"
+                "Wrong format of the input file, check the file has ['chrom', 'pos', 'nCompleteSamples', 'tstat'] columns"
             )
 
     SNP = SNP.rename(
