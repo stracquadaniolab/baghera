@@ -7,12 +7,19 @@ The easiest and fastest way to install BAGHERA using conda::
 $ conda install -c stracquadaniolab -c bioconda -c conda-forge
 
 
+
 Tutorial
 ---------------
 
-A typical BAGHERA analysis consists of 3 steps:
 
-1. Build a SNP annotation file, where SNPs are annotated to genes and LD scores
+A typical BAGHERA analysis consists of 3 steps, we briefly explain them here,
+more details can be found in the documentation and a practical example is
+in the snakemake workflow.
+
+1- Build a SNP annotation file
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Build a SNP annotation file, where SNPs are annotated to genes and LD scores
 are assigned. We use `precomputed ld-score <https://github.com/bulik/ldsc>`_ ,
 from the set of variants for the European population of 1000 Genomes, and  the
 genes in the `Gencode v31 annotations
@@ -22,12 +29,16 @@ To cope with overlapping genes, we clustered them, obtaining a dataset of
 
     $ baghera-tool create-files -l <ldscore_folder> -a <annotation.gtf> -s <ld_annotated_snps> -g <genes_table>
 
-
-2. Annotate summary statistics with the SNP annotation built in step 2::
+2- Annotate summary statistics
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Annotate summary statistics with the SNP annotation built in step 1::
 
     $ baghera-tool generate-snp-file -s <stats file> -i <input_type> -o <snps_file> -a <ld_annotated_snps>
 
-3. Run the regression::
+3- Run the regression
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Run the regression::
 
     $ baghera-tool gene-heritability <snps_file> <results_table> <summary_table> <log_file> --sweeps <samples> --burnin <tuning> --n-chains <chains> --n-cores <cores> -m <models>
 

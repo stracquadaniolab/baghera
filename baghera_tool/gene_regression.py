@@ -42,15 +42,15 @@ def analyse_normal(
     """
     Bayesian hierarchical regression on the dataset with the normal model.
 
-    :params snps_object: snps instance
-    :params output_summary_filename: output summary table
-    :params output_logger: logger instance
-    :params SWEEPS: samples for each chain
-    :params TUNE: burn-in samples
-    :params CHAINS: number of chains
-    :params CORES: number of cores
-    :params N1kG: number of SNPs
-    :params fix_intercept: if True the model fixes the intercept.
+    :param snps_object: snps instance
+    :param output_summary_filename: output summary table
+    :param output_logger: logger instance
+    :param SWEEPS: samples for each chain
+    :param TUNE: burn-in samples
+    :param CHAINS: number of chains
+    :param CORES: number of cores
+    :param N1kG: number of SNPs
+    :param fix_intercept: if True the model fixes the intercept.
     """
 
     snp_dataset = snps_object.table.copy().reset_index(drop=True)
@@ -195,15 +195,15 @@ def analyse_gamma(
     """
     Bayesian hierarchical regression on the dataset with the gamma model.
 
-    :params snps_object: snps instance
-    :params output_summary_filename: output summary table
-    :params output_logger: logger instance
-    :params SWEEPS: samples for each chain
-    :params TUNE: burn-in samples
-    :params CHAINS: number of chains
-    :params CORES: number of cores
-    :params N1kG: number of SNPs
-    :params fix_intercept: if True the model fixes the intercept.
+    :param snps_object: snps instance
+    :param output_summary_filename: output summary table
+    :param output_logger: logger instance
+    :param SWEEPS: samples for each chain
+    :param TUNE: burn-in samples
+    :param CHAINS: number of chains
+    :param CORES: number of cores
+    :param N1kG: number of SNPs
+    :param fix_intercept: if True the model fixes the intercept.
     """
 
     snp_dataset = snps_object.table.copy().reset_index(drop=True)

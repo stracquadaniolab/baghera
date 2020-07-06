@@ -56,21 +56,50 @@ To create the SNPs dataset use the `baghera-tool generate-SNPs-file` command
 
 The function uses a tsv table as input and merges it with the annotated ld score table.
 
-There are different input types managed by the code, specified in the parameter, use the `-t <type>` parameter, with one betweeen
-ldsc, ukbb, position, position_ukbb:
+SNPs input types
++++++++++++++++++++
 
-- `-t position_ukbb` an **UKBB** file, .assoc.tsv, that can be found in the round two results `here <http://www.nealelab.is/uk-biobank>`_
+There are different input types managed by the code, specified in the parameter, use the `-t <type>` parameter.
 
-.. autofunction:: baghera_tool.preprocess.import_position_ukbb
+We recommend the use of the **position** option, however we provide functions to directly
+process data that we have been using for this project.
 
-- `-t ldsc` a **sumstats** file, .sumstats.txt that is found on the ldsc file
+Merge according to position
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. autofunction:: baghera_tool.preprocess.import_ldsc
+Once the user makes sure the genome build in use is consistent across all files,
+merging SNPs and genes according to their position is the safest. This
+way no rsId is taken into consideration, with the risk of a different naming.
 
-- `-t position` file
+Specifying the flag `-t position`, BAGHERA expects to find the following
+columns in the input SNP file:
 
-.. autofunction:: baghera_tool.preprocess.import_position
+ - chrom: chromosome
+ - pos: BP
+ - nCompleteSamples: number of samples
+ - tstat: beta/se stat
 
-- `-t ukbb` an **UKBB** file, .assoc.tsv. Round one uk biobank results.
 
-.. autofunction:: baghera_tool.preprocess.import_ukbb
+UKBB format
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Since we processed all the data cancer data from the UKBB GWAS study available `here <http://www.nealelab.is/uk-biobank>`_
+ (in the round two results), we provide an off-the-shelf flag to directly process these data.
+ Using the flag `-t position_ukbb`, the tool automatically extracts the position from the *variant* field in the table.
+ This function directly splits the variant column if those are not found an exception is raised
+ THe tool is expecting the following fields:
+
+ - variant: a large variant
+ - nCompleteSamples: number of samples
+ - tstat: beta/se stat
+
+
+Other input formats
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The LD-score project has some available summary statistics that they have processed,
+use the `-t ldsc` to process the  **sumstats** file (.sumstats.txt)
+
+
+The LD-score project has some available summary statistics that they have processed,
+use `-t ukbb` to process the the old **UKBB** files, .assoc.tsv

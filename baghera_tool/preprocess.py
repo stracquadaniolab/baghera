@@ -12,7 +12,7 @@ def import_position_ukbb(fileInput):
     """
     Imports UK Biobank files.
     Three fields are mandatory in the assoc.tsv file:
-    "variant", "nCompleteSamples", "tstat"
+    "variant", "n_complete_samples", "tstat"
     and the merging is done on the position.
 
     This function directly splits the variant column
@@ -26,7 +26,7 @@ def import_position_ukbb(fileInput):
             )
         except ValueError:
             logging.exception(
-                "Wrong format of the input file, check the file has ['rsid','n_complete_samples','tstat'] columns"
+                "Wrong format of the input file, check the file has ['variant','n_complete_samples','tstat'] columns"
             )
     SNP = SNP.dropna(subset=["variant"])
 
