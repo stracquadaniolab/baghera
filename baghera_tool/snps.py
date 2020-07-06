@@ -36,11 +36,6 @@ class Snps(object):
         :param separator: separator of the table, defaults to ','
         """
 
-        with open(input_snp_filename) as f:
-            tab_remove = pd.read_csv(input_snp_filename)
-            print(tab_remove)
-            del tab_remove
-
         if separator == ",":
             with open(input_snp_filename) as f:
                 try:

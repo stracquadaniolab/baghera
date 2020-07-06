@@ -11,8 +11,8 @@ import os
 from baghera_tool import gene_regression as gr
 from baghera_tool import heritability
 import baghera_tool.logging as log
-from baghera_tool import snps
-from baghera_tool import genes
+from baghera_tool import snps as s
+from baghera_tool import genes as g
 
 
 #####################################################################
@@ -64,9 +64,9 @@ def gene_heritability(
 
     logging.info("Start Analysis")
 
-    snps = snps.Snps()
+    snps = s.Snps()
     # read table
-    print(input_snp_filename, sep)
+    logging.info("Reading SNP file: %s,\n\t with %s delimiter"%(input_snp_filename, sep))
     snps.read_table(input_snp_filename, separator=sep)
     # generate chi squared stats
     snps.generate_stats()
@@ -76,9 +76,9 @@ def gene_heritability(
 
 
 
-    snps.apply_filter_table(snps.baghera_filter)
+    snps.apply_filter_table(s.baghera_filter)
     snps.update_summary()
-    output_logger.info("After baghera init filter.\nNumber of SNPs: %s\nNumber of genes: %s\n" \
+    output_logger.info("After baghera init filter.\n\t Number of SNPs: %s\n\t Number of genes: %s\n" \
         %(str(snps.n_snps), str(snps.n_genes)) )
 
     # Non coding SNPs are assigned to a dummy gene, such that the regression is done on the entire SNPs' set
@@ -94,7 +94,7 @@ def gene_heritability(
             %(str(snps.n_snps), str(snps.n_genes)) )
 
     # Creates the genes table with the number of SNPs for each gene and the basic stats values
-    genes=genes.Genes()
+    genes=g.Genes()
     genes.initialise_genes(snps.table.copy(), snps_thr=snp_thr)
 
     output_logger.info("Output gene table initialised:\nNumber of genes: %s\n" \
@@ -111,9 +111,7 @@ def gene_heritability(
                 sweeps, burnin, n_chains, n_cores, N_1kG, fix_intercept,
         )
 
-    print(genes.table.head())
-    print(result.head())
-
+    logging.info("Saving genes table")
     genes.table = genes.table.merge(
         result, left_index=False, left_on="name", right_on="name")
 
@@ -173,7 +171,7 @@ def gw_heritability(
 
     logging.info("Start Analysis")
 
-    snps = snps.Snps()
+    snps = s.Snps()
     # read table
     snps.read_table(input_snp_filename, separator=sep)
     # generate chi squared stats
@@ -183,7 +181,7 @@ def gw_heritability(
     output_logger.info(" Sample size " + str(snps.n_patients) + "\n")
 
 
-    snps.apply_filter_table(snps.baghera_filter)
+    snps.apply_filter_table(s.baghera_filter)
     snps.update_summary()
     output_logger.info("After baghera init filter.\nNumber of SNPs: %s\nNumber of genes: %s\n" \
         %(str(snps.n_snps), str(snps.n_genes)) )
@@ -192,7 +190,6 @@ def gw_heritability(
     snps.rename_non_annotated(name='NonCoding')
 
     if chromosome != "all":
-        print(chromosome)
         snps.apply_filter_table(snps.cut_single_chrom, **{'chromosome': chromosome})
         output_logger.info(
             "Analysis restricted to chr %s" %str(chromosome) )

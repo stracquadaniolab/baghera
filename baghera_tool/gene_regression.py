@@ -72,7 +72,7 @@ def analyse_normal(
 
     logging.info("Model Evaluation Started")
     logging.info("Model Evaluation Started")
-    print("Average stats: %f" % np.mean(snps_object.table["stats"].values))
+    logging.info("Average stats: %f" % np.mean(snps_object.table["stats"].values))
 
     with pm.Model() as model:
         W = pm.InverseGamma("W", alpha=1.0, beta=1.0)
@@ -111,8 +111,8 @@ def analyse_normal(
             output_logger.info(
                 "DIAGNOSTIC (gelman-rubin) "
                 + str(GR)
-                + "\n"
-                + "(If this number is >> 1 the method has some convergence problem, \n try increasing the number of s and b)"
+                + "\n\t"
+                + "(If this number is >> 1 the method has some convergence problem, \n\t try increasing the number of s and b)"
             )
 
     logging.info("Writing output")
@@ -224,7 +224,7 @@ def analyse_gamma(
     cat = cat.astype(int)
 
     logging.info("Model Evaluation Started")
-    print("Average stats: %f" % np.mean(snps_object.table["stats"].values))
+    logging.info("Average stats: %f" % np.mean(snps_object.table["stats"].values))
 
     with pm.Model() as model:
         e = pm.Normal("e", mu=1, sd=0.001)

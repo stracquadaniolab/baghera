@@ -31,10 +31,7 @@ def import_position_ukbb(fileInput):
     SNP = SNP.dropna(subset=["variant"])
 
     SNP["chr"], SNP["position"], _, _ = SNP["variant"].str.split(":").str
-    # SNP['chr'],SNP['position'],_
     del SNP["variant"]
-
-    print(SNP.head())
 
     SNP = SNP.rename(columns={"tstat": "z", "n_complete_samples": "sample_size",})
     return SNP
