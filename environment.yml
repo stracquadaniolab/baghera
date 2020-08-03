@@ -4,12 +4,15 @@ channels:
   - bioconda
   - conda-forge
 dependencies:
-  - nomkl
-  - python
-  - setuptools
-  - argh
-  - pandas<1.0
-  - numpy==1.15.0
+  - python=3.7.2
+  - pandas
+  - bumpversion
+  - snakemake
+  - sphinx
+  - sphinx_rtd_theme
+  - pandas
+  - mkl-service
+  - numpy
   - htseq
   - gseapy
-  - pymc3==3.6
+  - pymc3 >=3.6
