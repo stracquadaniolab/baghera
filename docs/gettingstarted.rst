@@ -2,9 +2,28 @@
 Installation
 ------------
 
-The easiest and fastest way to install BAGHERA using conda::
+The easiest and fastest way to install BAGHERA using **conda**::
 
 $ conda install -c stracquadaniolab -c bioconda -c conda-forge
+
+
+We have prepared also a **docker** image that can be found at this `link
+<https://github.com/stracquadaniolab/baghera/packages>`_.
+
+The image can be pulled as follows::
+
+    $ docker run docker.pkg.github.com/stracquadaniolab/baghera/baghera:latest
+
+By downloading the docker image, you will download a virtual machine with the latest version of baghera and its requirements.
+
+Once the image is downloaded, you can run baghera from the docker.
+For example, use the command below to be prompted baghera's help::
+
+    $ docker run docker.pkg.github.com/stracquadaniolab/baghera/baghera:latest -h
+
+Here below is an example on how to use the `create-files` command::
+
+    $ docker run --rm -v "$PWD:$PWD" -w "$PWD" docker.pkg.github.com/stracquadaniolab/baghera/baghera:latest create-files -l <ldscore_folder> -a <annotation.gtf> -s <ld_annotated_snps> -g <genes_table>
 
 
 

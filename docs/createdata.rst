@@ -9,7 +9,7 @@ To create the SNPs dataset use the `baghera-tool create-files` command
 
 .. autofunction:: baghera_tool.preprocess.create_files
 
-We use `precomputed ld-score <https://github.com/bulik/ldsc>`_ , from the set of variants for the European population of 1000 Genomes, and  the genes in the `Gencode v31 annotations <https://www.gencodegenes.org/human/>`_ , only the protein coding ones. To cope with overlapping genes, we clustered them, obtaining a dataset of 15000 non-overlapping genes. For the annotation, we use a 50 kb window.
+We use `precomputed ld-score <https://github.com/bulik/ldsc>`_ , from the set of variants for the European population of 1000 Genomes (unzip the ld score files inside the downloaded folder), and  the genes in the `Gencode v31 annotations <https://www.gencodegenes.org/human/>`_ , only the protein coding ones. To cope with overlapping genes, we clustered them, obtaining a dataset of 15000 non-overlapping genes. For the annotation, we use a 50 kb window.
 The resulting dataset of annotated variants has around 1.3 millions SNPs, 55% of which are annotated with a gene.
 
 *Please note that this file has already been created, to process the data skip to the next section*
@@ -54,12 +54,12 @@ To create the SNPs dataset use the `baghera-tool generate-SNPs-file` command
 
 .. autofunction:: baghera_tool.preprocess.generate_snp_file
 
-The function uses a tsv table as input and merges it with the annotated ld score table.
+The function uses a **tsv** table as input and merges it with the annotated ld score table.
 
 SNPs input types
 +++++++++++++++++++
 
-There are different input types managed by the code, specified in the parameter, use the `-t <type>` parameter.
+There are different input types managed by the code, specified in the parameter, use the `-i <type>` parameter.
 
 We recommend the use of the **position** option, however we provide functions to directly
 process data that we have been using for this project.
@@ -71,7 +71,7 @@ Once the user makes sure the genome build in use is consistent across all files,
 merging SNPs and genes according to their position is the safest. This
 way no rsId is taken into consideration, with the risk of a different naming.
 
-Specifying the flag `-t position`, BAGHERA expects to find the following
+Specifying the flag `- position`, BAGHERA expects to find the following
 columns in the input SNP file:
 
  - chrom: chromosome
@@ -85,7 +85,7 @@ UKBB format
 
 Since we processed all the data cancer data from the UKBB GWAS study available `here <http://www.nealelab.is/uk-biobank>`_
  (in the round two results), we provide an off-the-shelf flag to directly process these data.
- Using the flag `-t position_ukbb`, the tool automatically extracts the position from the *variant* field in the table.
+ Using the flag `-i position_ukbb`, the tool automatically extracts the position from the *variant* field in the table.
  This function directly splits the variant column if those are not found an exception is raised
  THe tool is expecting the following fields:
 
@@ -98,8 +98,8 @@ Other input formats
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The LD-score project has some available summary statistics that they have processed,
-use the `-t ldsc` to process the  **sumstats** file (.sumstats.txt)
+use the `-i ldsc` to process the  **sumstats** file (.sumstats.txt)
 
 
 The LD-score project has some available summary statistics that they have processed,
-use `-t ukbb` to process the the old **UKBB** files, .assoc.tsv
+use `-i ukbb` to process the the old **UKBB** files, .assoc.tsv
