@@ -17,22 +17,22 @@ requirements:
     - python
     - setuptools
     - argh
-    - pandas
+    - pandas<1.0
     - mkl-service
-    - numpy
+    - numpy==1.15
     - htseq
     - gseapy
-    - pymc3 >=3.6
+    - pymc3==3.6
 
   run:
     - python
     - argh
-    - pandas
+    - pandas<1.0
     - mkl-service
-    - numpy
+    - numpy==1.15
     - htseq
     - gseapy
-    - pymc3 >=3.6
+    - pymc3==3.6
 
 test:
   commands:

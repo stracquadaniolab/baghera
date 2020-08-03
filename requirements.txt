@@ -1,7 +1,7 @@
 # This is an implicit value, here for clarity
 argh
-pandas
+pandas<1.0
 numpy==1.15
 htseq
 gseapy
-pymc3>=3.6
+pymc3==3.6
