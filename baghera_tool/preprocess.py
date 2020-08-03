@@ -270,7 +270,6 @@ def create_files(
             "chr22",
         ]
 
-    folder = g.glob(ldscore_folder + "*.l2.ldscore")
     if len(folder) > 0:
         logging.info("LD score folders found")
     else:
