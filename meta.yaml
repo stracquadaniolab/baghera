@@ -14,25 +14,26 @@ build:
 
 requirements:
   build:
-    - python
+    - nomkl
+    - python==3.7.7
     - setuptools
-    - argh
-    - pandas
-    - mkl-service
-    - numpy
-    - htseq
-    - gseapy
-    - pymc3 >=3.6
+    - argh==0.26.2
+    - pandas==0.25.3
+    - numpy==1.15.0
+    - htseq==0.12.4
+    - gseapy==0.9.19
+    - pymc3==3.6
 
   run:
-    - python
-    - argh
-    - pandas
-    - mkl-service
-    - numpy
-    - htseq
-    - gseapy
-    - pymc3 >=3.6
+    - nomkl
+    - python==3.7.7
+    - setuptools
+    - argh==0.26.2
+    - pandas==0.25.3
+    - numpy==1.15.0
+    - htseq==0.12.4
+    - gseapy==0.9.19
+    - pymc3==3.6
 
 test:
   commands:
