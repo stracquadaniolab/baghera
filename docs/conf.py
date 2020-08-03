@@ -28,9 +28,9 @@ copyright = 'Viola Fanfani'
 author = 'Viola Fanfani'
 
 # The short X.Y version
-version = '2.1.9'
+version = '2.1.10'
 # The full version, including alpha/beta/rc tags
-release = '2.1.9'
+release = '2.1.10'
 
 
 # -- General configuration ---------------------------------------------------
