@@ -12,4 +12,4 @@ dependencies:
     - numpy==1.15
     - htseq
     - gseapy
-    - pymc3 ==3.6
+    - pymc3==3.6

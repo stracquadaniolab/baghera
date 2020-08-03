@@ -22,7 +22,7 @@ requirements:
     - numpy==1.15
     - htseq
     - gseapy
-    - pymc3 ==3.6
+    - pymc3==3.6
 
   run:
     - nomkl
@@ -33,7 +33,7 @@ requirements:
     - numpy==1.15
     - htseq
     - gseapy
-    - pymc3 ==3.6
+    - pymc3==3.6
 
 test:
   commands:
