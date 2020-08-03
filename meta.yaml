@@ -14,26 +14,25 @@ build:
 
 requirements:
   build:
-    - nomkl
     - python
     - setuptools
     - argh
-    - pandas==0.25.3
-    - numpy==1.15.0
+    - pandas
+    - mkl-service
+    - numpy
     - htseq
     - gseapy
-    - pymc3==3.6
+    - pymc3 >=3.6
 
   run:
-    - nomkl
     - python
-    - setuptools
     - argh
-    - pandas==0.25.3
-    - numpy==1.15.0
+    - pandas
+    - mkl-service
+    - numpy
     - htseq
     - gseapy
-    - pymc3==3.6
+    - pymc3 >=3.6
 
 test:
   commands:
@@ -53,4 +52,3 @@ about:
     BAGHERA requires only summary statistics from a Genome-wide Association Study (GWAS),
     LD scores calculated from a population matching the ethnicity of the GWAS study
     and a gene annotation file in GTF format.
-
