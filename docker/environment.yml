@@ -8,8 +8,8 @@ dependencies:
     - python
     - setuptools
     - argh
-    - pandas<1.0
-    - numpy==1.15
+    - pandas==0.25.3
+    - numpy==1.15.0
     - htseq
     - gseapy
     - pymc3==3.6
