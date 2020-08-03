@@ -11,7 +11,7 @@ setup(
     # package information
     name = 'baghera_tool',
     packages = find_packages(),
-    version = '2.1.8',
+    version = '2.1.9',
     description = 'Bayesian Gene Heritability Analysis tool',
     long_description = readme,
     license = 'MIT',
