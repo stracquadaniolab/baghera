@@ -1,18 +1,17 @@
 name: baghera_tool
 channels:
-  - defaults
-  - bioconda
-  - conda-forge
+    - defaults
+    - bioconda
+    - conda-forge
 dependencies:
-  - python=3.7.2
-  - pandas
-  - bumpversion
-  - snakemake
-  - sphinx
-  - sphinx_rtd_theme
-  - pandas
-  - mkl-service
-  - numpy
-  - htseq
-  - gseapy
-  - pymc3 >=3.6
+    - python=3.7.2
+    - bumpversion
+    - snakemake
+    - sphinx
+    - sphinx_rtd_theme
+    - pandas==0.25.3
+    - mkl-service
+    - numpy==1.15.0
+    - htseq
+    - gseapy
+    - pymc3==3.6
