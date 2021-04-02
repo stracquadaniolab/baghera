@@ -75,9 +75,22 @@ Alongside BAGHERA, we are providing a Snakemake workflow https://github.com/stra
 
 ## Citation
 
-_Gene-level heritability analysis explains the polygenic architecture of cancer_.
-Viola Fanfani, Luca Citi, Adrian L. Harris, Francesco Pezzella, Giovanni Stracquadanio
-bioRxiv 599753; doi: https://doi.org/10.1101/599753
+The landscape of the heritable cancer genome
+Viola Fanfani, Luca Citi, Adrian L Harris, Francesco Pezzella and Giovanni Stracquadanio
+Cancer Res March 17 2021 DOI: 10.1158/0008-5472.CAN-20-3348
+
+```
+@article {Fanfani2021,
+	author = {Fanfani, Viola and Citi, Luca and Harris, Adrian L and Pezzella, Francesco and Stracquadanio, Giovanni},
+	title = {The landscape of the heritable cancer genome},
+	elocation-id = {canres.3348.2020},
+	year = {2021},
+	doi = {10.1158/0008-5472.CAN-20-3348},
+	publisher = {American Association for Cancer Research},
+	issn = {0008-5472},
+	journal = {Cancer Research}
+}
+```
 
 ## Issues
 We just released a major upgrade of the code, please report any issue.
