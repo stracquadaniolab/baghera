@@ -1,5 +1,8 @@
 Changelog
 =========
+v2.1.11 21/01/2022
+-------------------
+- Fixed bug to solve issue #5. Added back line that had been removed.
 
 v2.0.0 - 25/04/2020
 -------------------
