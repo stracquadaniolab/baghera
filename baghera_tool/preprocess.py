@@ -33,7 +33,12 @@ def import_position_ukbb(fileInput):
     SNP["chr"], SNP["position"], _, _ = SNP["variant"].str.split(":").str
     del SNP["variant"]
 
-    SNP = SNP.rename(columns={"tstat": "z", "n_complete_samples": "sample_size",})
+    SNP = SNP.rename(
+        columns={
+            "tstat": "z",
+            "n_complete_samples": "sample_size",
+        }
+    )
     return SNP
 
 
@@ -88,7 +93,11 @@ def import_ukbb(fileInput):
             )
 
     SNP = SNP.rename(
-        columns={"rsid": "rs_id", "tstat": "z", "nCompleteSamples": "sample_size",}
+        columns={
+            "rsid": "rs_id",
+            "tstat": "z",
+            "nCompleteSamples": "sample_size",
+        }
     )
     return SNP
 
@@ -150,7 +159,9 @@ def annotate_snp(annotation, snp, window):
 
     # create a query SNP to lookup features +/- window from it
     query_snp = HTSeq.GenomicInterval(
-        snp.chrom, snp.pos - window * (snp.pos - window > 0), snp.pos + window,
+        snp.chrom,
+        snp.pos - window * (snp.pos - window > 0),
+        snp.pos + window,
     )
 
     # keep track of the closest gene and distance
@@ -185,8 +196,8 @@ def annotate_snp(annotation, snp, window):
 
 
 def cluster_genes(genes, chrom_list):
-    """ cleans overlapping regions, all partially or completely
-        overlapping genes are clustered into a single gene
+    """cleans overlapping regions, all partially or completely
+    overlapping genes are clustered into a single gene
     """
 
     genes2 = HTSeq.GenomicArrayOfSets(chrom_list, stranded=False)
@@ -270,8 +281,10 @@ def create_files(
             "chr22",
         ]
 
+    folder = g.glob(ldscore_folder + "*.l2.ldscore")
+
     if len(folder) > 0:
-        logging.info("LD score folders found")
+        logging.info("LD score folder found")
     else:
         logging.error("LD score folder not found")
         sys.exit()
@@ -283,12 +296,21 @@ def create_files(
         with open(f) as file:
             LD.append(
                 pd.read_csv(
-                    file, usecols=["CHR", "SNP", "BP", "CM", "MAF", "L2"], sep="\t",
+                    file,
+                    usecols=["CHR", "SNP", "BP", "CM", "MAF", "L2"],
+                    sep="\t",
                 )
             )
 
     ld = pd.concat(LD)
-    ld = ld.rename(columns={"CHR": "chr", "SNP": "rs_id", "BP": "position", "L2": "l",})
+    ld = ld.rename(
+        columns={
+            "CHR": "chr",
+            "SNP": "rs_id",
+            "BP": "position",
+            "L2": "l",
+        }
+    )
 
     genes = load_gtf_annotation(file_genes, chrom_list)  # loads annotation
     logging.info("Annotation file loaded")
