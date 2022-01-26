@@ -18,7 +18,9 @@ jobs:
                   python-version: ${{ matrix.python }}
                   channels: conda-forge,bioconda,defaults
                   conda-build-version: "3.21.7"
-                  activate-environment: "test"
+                  auto-activate-base: true
+                  activate-environment: ""
+
             - name: "Install Conda client"
               run: |
                   conda activate base
