@@ -10,23 +10,15 @@ jobs:
                 python: [3.7]
                 numpy: [1.15]
         steps:
-            - uses: actions/checkout@v1
+            - uses: actions/checkout@v2
             - name: "Setup Conda"
               uses: conda-incubator/setup-miniconda@v2
               with:
                   auto-update-conda: true
                   channels: conda-forge,bioconda,defaults
                   conda-build-version: "3.21.7"
-                  auto-activate-base: true
-                  activate-environment: ""
-
             - name: "Install Conda client"
               run: conda install -c anaconda anaconda-client
-            - name: "Testing Anaconda client"
-              run: |
-                  echo $CONDA_PREFIX
-                  conda info
-                  $CONDA/bin/anaconda upload -h
             - name: "Build Conda package"
               run: |
                   conda build --no-build-id --numpy ${{ matrix.numpy }} --output-folder . .
@@ -48,5 +40,3 @@ jobs:
                   load: true
                   push: true
                   tags: ghcr.io/${{ github.repository }}:v0.0.0, ghcr.io/${{ github.repository }}:latest
-                  username: ${{ github.actor }}
-                  password: ${{ secrets.GITHUB_TOKEN }}
