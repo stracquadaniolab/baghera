@@ -21,9 +21,7 @@ jobs:
                   activate-environment: ""
 
             - name: "Install Conda client"
-              run: |
-                  conda activate base
-                  conda install -c anaconda anaconda-client
+              run: conda install -c anaconda anaconda-client
             - name: "Testing Anaconda client"
               run: |
                   echo $CONDA_PREFIX
