@@ -21,7 +21,7 @@ jobs:
                   auto-activate-base: true
             - name: "Install Conda client"
               run: |
-                  conda install -c anaconda anaconda-client
+                  conda install -c anaconda anaconda anaconda-client
             - name: "Testing Anaconda client"
               run: anaconda upload -h
             - name: "Build Conda package"
