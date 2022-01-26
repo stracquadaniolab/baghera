@@ -18,12 +18,14 @@ jobs:
                   python-version: ${{ matrix.python }}
                   channels: conda-forge,bioconda,defaults
                   conda-build-version: "3.21.7"
-                  auto-activate-base: true
             - name: "Install Conda client"
               run: |
-                  conda install -c anaconda anaconda anaconda-client
+                  conda install -c anaconda anaconda-client
             - name: "Testing Anaconda client"
-              run: anaconda upload -h
+              run: |
+                  echo $CONDA_PREFIX
+                  conda info
+                  anaconda upload -h
             - name: "Build Conda package"
               run: |
                   conda build --no-build-id --numpy ${{ matrix.numpy }} --output-folder . .
