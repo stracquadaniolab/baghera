@@ -1,10 +1,13 @@
 FROM continuumio/miniconda3:latest
 
-LABEL org.stracquadaniolab.name="baghera"
-LABEL org.stracquadaniolab.description="BAyesian Gene-level HERitability Analysis"
-LABEL org.stracquadaniolab.maintainer="Viola Fanfani"
-LABEL org.stracquadaniolab.maintainer="Giovanni Stracquadanio"
-LABEL org.stracquadaniolab.version="$VERSION"
+LABEL org.opencontainers.image.title="baghera"
+LABEL org.opencontainers.image.description="BAyesian Gene-level HERitability Analysis."
+LABEL org.opencontainers.image.url="https://github.com/stracquadaniolab/baghera"
+LABEL org.opencontainers.image.documentation="https://github.com/stracquadaniolab/baghera"
+LABEL org.opencontainers.image.source="https://github.com/stracquadaniolab/baghera"
+LABEL org.opencontainers.image.revision="2.1.12"
+LABEL org.opencontainers.image.vendor="stracquadaniolab"
+LABEL org.opencontainers.image.authors="Viola Fanfani, Giovanni Stracquadanio"
 
 ######################################################################
 # update sources and add tini

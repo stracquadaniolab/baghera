@@ -1,0 +1,44 @@
+name: "Release"
+
+on: [push]
+jobs:
+    release:
+        name: "Build Conda package"
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                python: [3.7]
+                numpy: [1.15]
+        steps:
+            - uses: actions/checkout@v1
+            - name: "Setup Conda"
+              uses: conda-incubator/setup-miniconda@v2
+              with:
+                  auto-update-conda: true
+                  python-version: ${{ matrix.python }}
+                  channels: conda-forge,bioconda,defaults
+                  conda-build-version: "3.21.7"
+            - name: "Install Conda client"
+              run: |
+                  conda install -c anaconda anaconda-client
+            - name: "Build and upload Conda package"
+              run: |
+                  conda build --no-build-id --numpy ${{ matrix.numpy }} --output-folder . .
+                  conda convert -p osx-64 linux-64/*.tar.bz2
+                  anaconda -t ${{ secrets.ANACONDA_API_TOKEN }} upload --force -u stracquadaniolab --no-progress linux-64/*.tar.bz2
+                  anaconda -t ${{ secrets.ANACONDA_API_TOKEN }} upload --force -u stracquadaniolab --no-progress osx-64/*.tar.bz2
+            - name: Login to GitHub Container Registry
+              uses: docker/login-action@v1
+              with:
+                  registry: ghcr.io
+                  username: ${{ github.repository_owner }}
+                  password: ${{ secrets.GHCR_TOKEN }}
+            - name: "Push Docker image on GitHub Container Registry"
+              uses: docker/build-push-action@v2
+              with:
+                  dockerfile: ./docker/Dockerfile
+                  load: true
+                  push: true
+                  tags: ghcr.io/${{ github.repository }}:v0.0.0, ghcr.io/${{ github.repository }}:latest
+                  username: ${{ github.actor }}
+                  password: ${{ secrets.GITHUB_TOKEN }}
