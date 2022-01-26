@@ -20,6 +20,7 @@ jobs:
                   conda-build-version: "3.21.7"
             - name: "Install Conda client"
               run: |
+                  conda activate base
                   conda install -c anaconda anaconda-client
             - name: "Testing Anaconda client"
               run: |
