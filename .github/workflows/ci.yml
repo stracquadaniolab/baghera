@@ -15,7 +15,6 @@ jobs:
               uses: conda-incubator/setup-miniconda@v2
               with:
                   auto-update-conda: true
-                  python-version: ${{ matrix.python }}
                   channels: conda-forge,bioconda,defaults
                   conda-build-version: "3.21.7"
                   auto-activate-base: true
