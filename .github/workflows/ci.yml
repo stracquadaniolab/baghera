@@ -36,7 +36,6 @@ jobs:
             - name: "Push Docker image to GitHub Container Registry"
               uses: docker/build-push-action@v2
               with:
-                  dockerfile: ./docker/Dockerfile
-                  load: true
+                  file: ./docker/Dockerfile
                   push: true
                   tags: ghcr.io/${{ github.repository }}:v0.0.0, ghcr.io/${{ github.repository }}:latest
