@@ -39,4 +39,4 @@ jobs:
                   dockerfile: ./docker/Dockerfile
                   load: true
                   push: true
-                  tags: ghcr.io/${{ github.repository }}:v2.1.12, ghcr.io/${{ github.repository }}:latest
+                  tags: ghcr.io/${{ github.repository }}:v2.2.0, ghcr.io/${{ github.repository }}:latest
